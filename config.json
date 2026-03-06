@@ -1,0 +1,21 @@
+{
+  "telegram": {
+    "channel_id": "@PersianGithubMirror"
+  },
+  "repositories": [
+    {
+      "name": "Oblivion",
+      "github_url": "https://github.com/bepass-org/oblivion",
+      "google_play_url": "https://play.google.com/store/apps/details?id=org.bepass.oblivion",
+      "apple_store_url": "",
+      "microsoft_store_url": ""
+    },
+    {
+      "name": "SlipNet",
+      "github_url": "https://github.com/anonvector/SlipNet",
+      "google_play_url": "",
+      "apple_store_url": "",
+      "microsoft_store_url": ""
+    }
+  ]
+}
