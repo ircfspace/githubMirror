@@ -242,20 +242,56 @@ func sendReleaseToChannel(repo Repository, release GitHubRelease) error {
 			// Fallback: send files individually
 			for i, doc := range documents {
 				mediaDoc := doc.(tgbotapi.InputMediaDocument)
-				// Only first file gets caption
+				fileReader := mediaDoc.Media.(tgbotapi.FileReader)
+				fileName := fileReader.Name
+				
+				// Simple caption for individual files
+				var caption string
 				if i == 0 {
-					mediaDoc.Caption = fmt.Sprintf("📎 فایل‌های %s - %s\n%s", repo.Name, release.TagName, createCaption(repo, release, fileHashes))
+					caption = fmt.Sprintf("📎 %s - %s\n\n📦 نسخه: %s\n📎 فایل: %s", 
+						repo.Name, release.TagName, release.TagName, fileName)
 				} else {
-					mediaDoc.Caption = ""
+					caption = fmt.Sprintf("📎 %s", fileName)
 				}
 				
-				msg := tgbotapi.NewDocument(channelID, mediaDoc.Media)
-				msg.Caption = mediaDoc.Caption
+				// Add hash if available
+				if hash, exists := fileHashes[fileName]; exists {
+					caption += fmt.Sprintf("\n🔒 SHA256: `%s`", hash)
+				}
+				
+				// Find the corresponding asset to get download URL
+				var downloadURL string
+				for _, asset := range release.Assets {
+					if asset.Name == fileName {
+						downloadURL = asset.BrowserDownloadURL
+						break
+					}
+				}
+				
+				if downloadURL == "" {
+					logger.Errorf("Could not find download URL for file: %s", fileName)
+					continue
+				}
+				
+				// Create new file reader for each upload
+				content, downloadErr := downloadFile(downloadURL)
+				if downloadErr != nil {
+					logger.Errorf("Error re-downloading %s: %v", fileName, downloadErr)
+					continue
+				}
+				
+				newFileReader := tgbotapi.FileReader{
+					Name:   fileName,
+					Reader: bytes.NewReader(content),
+				}
+				
+				msg := tgbotapi.NewDocument(channelID, newFileReader)
+				msg.Caption = caption
 				_, sendErr := bot.Send(msg)
 				if sendErr != nil {
-					logger.Errorf("Error sending individual file %s: %v", mediaDoc.Media.(tgbotapi.FileReader).Name, sendErr)
+					logger.Errorf("Error sending individual file %s: %v", fileName, sendErr)
 				} else {
-					logger.Infof("Successfully sent file: %s", mediaDoc.Media.(tgbotapi.FileReader).Name)
+					logger.Infof("Successfully sent file: %s", fileName)
 				}
 			}
 		} else {
