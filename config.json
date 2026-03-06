@@ -1,6 +1,7 @@
 {
   "telegram": {
-    "channel_id": "@PersianGithubMirror"
+    "channel_id": "-1001234567890",
+    "channel_username": "@PersianGithubMirror"
   },
   "repositories": [
     {

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
@@ -11,6 +12,7 @@ import (
 	"os"
 	"path/filepath"
 	"sort"
+	"strconv"
 	"strings"
 	"time"
 
@@ -322,17 +324,40 @@ func sendReleaseToChannel(repo Repository, release GitHubRelease) error {
 
 	// Send files separately if any exist
 	if len(documents) > 0 {
-		logger.Infof("Found %d files to upload")
+		logger.Infof("Found %d files to upload", len(documents))
 		
-		// For now, just send info about files without uploading
-		// In production, we'd need to implement proper file upload with channel ID
-		logger.Infof("Files available for this release:")
-		for i := range documents {
-			if i >= 10 {
-				logger.Infof("... and %d more files", len(documents)-10)
+		// Send files as individual documents
+		for i, asset := range release.Assets {
+			if i >= 10 { // Limit to 10 files
+				logger.Infof("Skipping files %d-%d (limit reached)", i+1, len(release.Assets))
 				break
 			}
-			logger.Infof("- File %d", i+1)
+			
+			// Download the file content for upload
+			content, err := downloadFile(asset.BrowserDownloadURL)
+			if err != nil {
+				logger.Errorf("Error downloading %s: %v", asset.Name, err)
+				continue
+			}
+			
+			// Create file reader for upload
+			fileReader := tgbotapi.FileReader{
+				Name:   asset.Name,
+				Reader: bytes.NewReader(content),
+			}
+			
+			// Send document to channel using numeric ID
+			channelID, _ := strconv.ParseInt(config.Telegram.ChannelID, 10, 64)
+			docMsg := tgbotapi.NewDocument(channelID, fileReader)
+			docMsg.Caption = fmt.Sprintf("📎 %s\n%s", asset.Name, fileHashes[asset.Name])
+			docMsg.ParseMode = ""
+			
+			_, err = bot.Send(docMsg)
+			if err != nil {
+				logger.Errorf("Error sending file %s: %v", asset.Name, err)
+			} else {
+				logger.Infof("Successfully sent file: %s", asset.Name)
+			}
 		}
 	}
 
@@ -417,8 +442,13 @@ func main() {
 
 	logger.Infof("Bot authorized as @%s", bot.Self.UserName)
 
-	// PGP verification disabled due to library compatibility issues
-	// In production, you'd need proper GPG setup
+	// Check if channel ID is numeric
+	if strings.HasPrefix(config.Telegram.ChannelID, "@") {
+		logger.Errorf("Channel ID must be numeric, not username")
+		logger.Infof("Please replace '%s' in config.json with numeric channel ID", config.Telegram.ChannelID)
+		logger.Infof("Get numeric ID from @userinfobot by forwarding a message from your channel")
+		log.Fatalf("Please update config.json with numeric channel ID")
+	}
 
 	// Setup cron job
 	c := cron.New()
