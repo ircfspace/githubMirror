@@ -313,13 +313,17 @@ func sendReleaseToChannel(repo Repository, release GitHubRelease) error {
 	replyMarkup := tgbotapi.NewInlineKeyboardMarkup(keyboard...)
 
 	// Send as text message with file info
-	msg := tgbotapi.NewMessageToChannel(config.Telegram.ChannelID, caption)
-	msg.ParseMode = "" // Remove Markdown to avoid parsing errors
-	msg.ReplyMarkup = replyMarkup
+	if config.Telegram.ChannelID != "0" {
+		msg := tgbotapi.NewMessageToChannel(config.Telegram.ChannelID, caption)
+		msg.ParseMode = "" // Remove Markdown to avoid parsing errors
+		msg.ReplyMarkup = replyMarkup
 
-	_, err := bot.Send(msg)
-	if err != nil {
-		return fmt.Errorf("error sending message: %w", err)
+		_, err := bot.Send(msg)
+		if err != nil {
+			return fmt.Errorf("error sending message: %w", err)
+		}
+	} else {
+		logger.Infof("Skipping message upload - invalid channel ID")
 	}
 
 	// Send files separately if any exist
@@ -333,10 +337,10 @@ func sendReleaseToChannel(repo Repository, release GitHubRelease) error {
 				break
 			}
 			
-			// Download the file content for upload
-			content, err := downloadFile(asset.BrowserDownloadURL)
-			if err != nil {
-				logger.Errorf("Error downloading %s: %v", asset.Name, err)
+			// Download file content for upload
+			content, downloadErr := downloadFile(asset.BrowserDownloadURL)
+			if downloadErr != nil {
+				logger.Errorf("Error downloading %s: %v", asset.Name, downloadErr)
 				continue
 			}
 			
@@ -347,25 +351,29 @@ func sendReleaseToChannel(repo Repository, release GitHubRelease) error {
 			}
 			
 			// Send document to channel using numeric ID
-			channelID, _ := strconv.ParseInt(config.Telegram.ChannelID, 10, 64)
-			docMsg := tgbotapi.NewDocument(channelID, fileReader)
-			docMsg.Caption = fmt.Sprintf("📎 %s\n%s", asset.Name, fileHashes[asset.Name])
-			docMsg.ParseMode = ""
-			
-			_, err = bot.Send(docMsg)
-			if err != nil {
-				logger.Errorf("Error sending file %s: %v", asset.Name, err)
+			if config.Telegram.ChannelID != "0" {
+				channelID, _ := strconv.ParseInt(config.Telegram.ChannelID, 10, 64)
+				docMsg := tgbotapi.NewDocument(channelID, fileReader)
+				docMsg.Caption = fmt.Sprintf("📎 %s\n%s", asset.Name, fileHashes[asset.Name])
+				docMsg.ParseMode = ""
+				
+				_, sendErr := bot.Send(docMsg)
+				if sendErr != nil {
+					logger.Errorf("Error sending file %s: %v", asset.Name, sendErr)
+				} else {
+					logger.Infof("Successfully sent file: %s", asset.Name)
+				}
 			} else {
-				logger.Infof("Successfully sent file: %s", asset.Name)
+				logger.Infof("Skipping file upload - invalid channel ID")
 			}
 		}
 	}
 
 	// Mark as processed
 	processedReleases[releaseID] = time.Now().Format(time.RFC3339)
-	err = saveProcessedReleases()
-	if err != nil {
-		logger.Errorf("Error saving processed releases: %v", err)
+	saveErr := saveProcessedReleases()
+	if saveErr != nil {
+		logger.Errorf("Error saving processed releases: %v", saveErr)
 	}
 
 	logger.Infof("Successfully sent release %s to channel", releaseID)
@@ -410,6 +418,8 @@ func checkAllRepositories() {
 		err = sendReleaseToChannel(repo, *latestRelease)
 		if err != nil {
 			logger.Errorf("Error sending release to channel: %v", err)
+			// Continue to next repository instead of stopping
+			continue
 		} else {
 			logger.Infof("Release sent successfully")
 		}
@@ -447,7 +457,11 @@ func main() {
 		logger.Errorf("Channel ID must be numeric, not username")
 		logger.Infof("Please replace '%s' in config.json with numeric channel ID", config.Telegram.ChannelID)
 		logger.Infof("Get numeric ID from @userinfobot by forwarding a message from your channel")
-		log.Fatalf("Please update config.json with numeric channel ID")
+		logger.Infof("Continuing with test mode - will check releases but won't send files")
+		// Set a flag to skip file uploads
+		config.Telegram.ChannelID = "0" // Invalid ID to skip uploads
+	} else {
+		logger.Infof("Using channel ID: %s", config.Telegram.ChannelID)
 	}
 
 	// Setup cron job
