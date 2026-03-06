@@ -177,6 +177,14 @@ func sendReleaseToChannel(repo Repository, release GitHubRelease) error {
 	}
 
 	logger.Infof("Release %s is new, processing...", releaseID)
+	
+	// Mark as processed immediately to avoid duplicates
+	processedReleases[releaseID] = time.Now().Format(time.RFC3339)
+	saveErr := saveProcessedReleases()
+	if saveErr != nil {
+		logger.Errorf("Error saving processed releases: %v", saveErr)
+	}
+	
 	fileHashes := make(map[string]string)
 	
 	logger.Infof("Found %d assets in release", len(release.Assets))
@@ -270,7 +278,7 @@ func sendReleaseToChannel(repo Repository, release GitHubRelease) error {
 			fileName := fileReader.Name
 			
 			// Caption for all files (English)
-			caption := fmt.Sprintf("📎 %s\n📦 Version: %s\n📎 File: `%s`", 
+			caption := fmt.Sprintf("📎 #%s\n📦 Version: %s\n📎 File: `%s`", 
 				repo.Name, release.TagName, fileName)
 			
 			// Add hash if available
@@ -314,13 +322,6 @@ func sendReleaseToChannel(repo Repository, release GitHubRelease) error {
 				logger.Infof("Successfully sent file: %s", fileName)
 			}
 		}
-	}
-
-	// Mark as processed
-	processedReleases[releaseID] = time.Now().Format(time.RFC3339)
-	saveErr := saveProcessedReleases()
-	if saveErr != nil {
-		logger.Errorf("Error saving processed releases: %v", saveErr)
 	}
 
 	logger.Infof("Successfully sent release %s to channel", releaseID)
