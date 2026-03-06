@@ -221,7 +221,15 @@ func sendReleaseToChannel(repo Repository, release GitHubRelease) error {
 		documents = append(documents, mediaDoc)
 	}
 	
-		// Send introduction message first
+		// Get channel username and create URL (used for both intro and file buttons)
+	channelUsername := config.Telegram.ChannelUsername
+	if channelUsername == "" {
+		// Fallback: try to construct from ChannelID
+		channelUsername = strings.TrimPrefix(config.Telegram.ChannelID, "@")
+	}
+	channelURL := fmt.Sprintf("https://t.me/%s", strings.TrimPrefix(channelUsername, "@"))
+
+	// Send introduction message first
 	if config.Telegram.ChannelID != "0" {
 		// Create simple introduction message (English)
 		introCaption := fmt.Sprintf("🚀 New Release: %s\n\n📦 Version: %s\n📅 Date: %s\n\n🔗 GitHub: %s", 
@@ -242,18 +250,10 @@ func sendReleaseToChannel(repo Repository, release GitHubRelease) error {
 			}
 		}
 		
-		// Get channel username from config (should be set in config.json)
-		channelUsername := config.Telegram.ChannelUsername
-		if channelUsername == "" {
-			// Fallback: try to construct from ChannelID
-			channelUsername = strings.TrimPrefix(config.Telegram.ChannelID, "@")
-		}
-		
 		// Create inline keyboard with back button using username
-		channelURL := fmt.Sprintf("https://t.me/%s", channelUsername)
 		keyboard := [][]tgbotapi.InlineKeyboardButton{
 			{
-				{Text: "🔙 Back to Channel", URL: &channelURL},
+				{Text: "📎 میرور گیت‌هاب", URL: &channelURL},
 			},
 		}
 		replyMarkup := tgbotapi.NewInlineKeyboardMarkup(keyboard...)
@@ -276,10 +276,10 @@ func sendReleaseToChannel(repo Repository, release GitHubRelease) error {
 	if len(documents) > 0 {
 		channelID, _ := strconv.ParseInt(config.Telegram.ChannelID, 10, 64)
 		
-		// Create inline keyboard for files with "دریافت فایلهای بیشتر" button
+		// Create inline keyboard for files with "دریافت فایل‌های بیشتر" button linking to channel
 		fileKeyboard := [][]tgbotapi.InlineKeyboardButton{
 			{
-				{Text: "دریافت فایلهای بیشتر", CallbackData: &[]string{"more_files"}[0]},
+				{Text: "فایل‌های بیشتر", URL: &channelURL},
 			},
 		}
 		fileReplyMarkup := tgbotapi.NewInlineKeyboardMarkup(fileKeyboard...)
