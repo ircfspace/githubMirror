@@ -39,7 +39,7 @@ jobs:
       env:
         TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
       run: |
-        timeout 900s go run main.go mtproto_uploader.go || {
+        timeout 900s go run main.go real_mtproto_uploader.go || {
           echo "Bot completed - this is expected behavior"
           exit 0
         }

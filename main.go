@@ -55,7 +55,7 @@ type Asset struct {
 var (
 	config           Config
 	bot             *tgbotapi.BotAPI
-	mtprotoUploader *MTProtoUploader
+	realMTProtoUploader *RealMTProtoUploader
 	processedReleases map[string]string
 	logger          *logrus.Logger
 )
@@ -310,8 +310,8 @@ func sendReleaseToChannel(repo Repository, release GitHubRelease) error {
 			}
 			
 			// Use MTProto uploader for better handling of large files
-			if mtprotoUploader != nil {
-				err := mtprotoUploader.UploadLargeFile(channelID, fileName, content, caption)
+			if realMTProtoUploader != nil {
+				err := realMTProtoUploader.UploadLargeFile(channelID, fileName, content, caption)
 				if err != nil {
 					logger.Errorf("MTProto upload failed for %s, falling back to regular upload: %v", fileName, err)
 					
@@ -514,17 +514,23 @@ func main() {
 	// Initialize MTProto uploader for large file handling
 	botToken := os.Getenv("TELEGRAM_BOT_TOKEN")
 	if botToken != "" {
-		mtprotoUploader, err = NewMTProtoUploader(botToken)
+		realMTProtoUploader, err = NewRealMTProtoUploader(botToken)
 		if err != nil {
 			logger.Errorf("Failed to initialize MTProto uploader: %v", err)
 			logger.Infof("Will use regular bot API for all uploads (50MB limit applies)")
-			mtprotoUploader = nil
+			realMTProtoUploader = nil
 		} else {
-			logger.Infof("MTProto uploader initialized successfully - can handle files larger than 50MB")
+			// Connect to Telegram
+			if connectErr := realMTProtoUploader.Connect(botToken); connectErr != nil {
+				logger.Errorf("Failed to connect MTProto uploader: %v", connectErr)
+				realMTProtoUploader = nil
+			} else {
+				logger.Infof("Real MTProto uploader initialized successfully - can handle files larger than 50MB")
+			}
 		}
 	} else {
 		logger.Errorf("TELEGRAM_BOT_TOKEN not found in environment variables")
-		mtprotoUploader = nil
+		realMTProtoUploader = nil
 	}
 
 	// Setup cron job
@@ -548,8 +554,8 @@ func main() {
 	logger.Info("Initial check completed. Bot will exit.")
 	
 	// Cleanup MTProto uploader if it was initialized
-	if mtprotoUploader != nil {
-		if err := mtprotoUploader.Close(); err != nil {
+	if realMTProtoUploader != nil {
+		if err := realMTProtoUploader.Close(); err != nil {
 			logger.Errorf("Error closing MTProto uploader: %v", err)
 		}
 	}
