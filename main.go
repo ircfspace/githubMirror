@@ -169,7 +169,7 @@ func createCaption(repo Repository, release GitHubRelease, fileHashes map[string
 
 func sendReleaseToChannel(repo Repository, release GitHubRelease) error {
 	logger.Infof("Processing release: %s", release.TagName)
-	releaseID := fmt.Sprintf("%s#%d", repo.GitHubURL, release.ID)
+	releaseID := fmt.Sprintf("%s#%s", repo.Name, release.TagName)
 
 	if _, exists := processedReleases[releaseID]; exists {
 		logger.Infof("Release %s already processed", releaseID)
@@ -383,10 +383,15 @@ func getGitHubReleases(repoURL string) ([]GitHubRelease, error) {
 	owner := parts[3]
 	repoName := parts[4]
 	
+	// Create HTTP client with timeout
+	client := &http.Client{
+		Timeout: 30 * time.Second,
+	}
+	
 	// Get releases from GitHub API
 	apiURL := fmt.Sprintf("https://api.github.com/repos/%s/%s/releases", owner, repoName)
 	
-	resp, err := http.Get(apiURL)
+	resp, err := client.Get(apiURL)
 	if err != nil {
 		return nil, fmt.Errorf("error fetching releases: %w", err)
 	}
@@ -406,7 +411,12 @@ func getGitHubReleases(repoURL string) ([]GitHubRelease, error) {
 }
 
 func downloadFile(url string) ([]byte, error) {
-	resp, err := http.Get(url)
+	// Create HTTP client with timeout
+	client := &http.Client{
+		Timeout: 60 * time.Second, // Longer timeout for file downloads
+	}
+	
+	resp, err := client.Get(url)
 	if err != nil {
 		return nil, err
 	}
