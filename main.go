@@ -222,13 +222,13 @@ func sendReleaseToChannel(repo Repository, release GitHubRelease) error {
 	
 	// Send introduction message first
 	if config.Telegram.ChannelID != "0" {
-		// Create simple introduction message
-		introCaption := fmt.Sprintf("🚀 ریلیز جدید: %s\n\n📦 نسخه: %s\n📅 تاریخ: %s\n\n🔗 GitHub: %s", 
+		// Create simple introduction message (English)
+		introCaption := fmt.Sprintf("🚀 New Release: %s\n\n📦 Version: %s\n📅 Date: %s\n\n🔗 GitHub: %s", 
 			repo.Name, release.TagName, release.PublishedAt.Format("2006-01-02 15:04:05"), repo.GitHubURL)
 		
 		// Add hashes to introduction
 		if len(fileHashes) > 0 {
-			introCaption += "\n\n🔒 هش‌های SHA256:"
+			introCaption += "\n\n🔒 SHA256 Hashes:"
 			var filenames []string
 			for filename := range fileHashes {
 				filenames = append(filenames, filename)
@@ -245,13 +245,13 @@ func sendReleaseToChannel(repo Repository, release GitHubRelease) error {
 		channelURL := fmt.Sprintf("https://t.me/%s", strings.TrimPrefix(config.Telegram.ChannelID, "@"))
 		keyboard := [][]tgbotapi.InlineKeyboardButton{
 			{
-				{Text: "🔙 بازگشت به کانال", URL: &channelURL},
+				{Text: "🔙 Back to Channel", URL: &channelURL},
 			},
 		}
 		replyMarkup := tgbotapi.NewInlineKeyboardMarkup(keyboard...)
 
 		msg := tgbotapi.NewMessageToChannel(config.Telegram.ChannelID, introCaption)
-		msg.ParseMode = "" // Remove Markdown to avoid parsing errors
+		msg.ParseMode = "Markdown" // Enable Markdown for code formatting
 		msg.ReplyMarkup = replyMarkup
 
 		_, err := bot.Send(msg)
@@ -273,10 +273,10 @@ func sendReleaseToChannel(repo Repository, release GitHubRelease) error {
 			fileReader := mediaDoc.Media.(tgbotapi.FileReader)
 			fileName := fileReader.Name
 			
-			// Simple caption for individual files
+			// Simple caption for individual files (English)
 			var caption string
 			if i == 0 {
-				caption = fmt.Sprintf("📎 %s - %s\n\n📦 نسخه: %s\n📎 فایل: %s", 
+				caption = fmt.Sprintf("📎 %s - %s\n\n📦 Version: %s\n📎 File: %s", 
 					repo.Name, release.TagName, release.TagName, fileName)
 			} else {
 				caption = fmt.Sprintf("📎 %s", fileName)
@@ -315,6 +315,7 @@ func sendReleaseToChannel(repo Repository, release GitHubRelease) error {
 			
 			msg := tgbotapi.NewDocument(channelID, newFileReader)
 			msg.Caption = caption
+			msg.ParseMode = "Markdown" // Enable Markdown for code formatting
 			_, sendErr := bot.Send(msg)
 			if sendErr != nil {
 				logger.Errorf("Error sending individual file %s: %v", fileName, sendErr)
