@@ -290,8 +290,8 @@ func sendReleaseToChannel(repo Repository, release GitHubRelease) error {
 			fileName := fileReader.Name
 			
 			// Caption for all files (English)
-			caption := fmt.Sprintf("📎 %s - %s\n\n📦 Version: %s\n📎 File: %s", 
-				repo.Name, release.TagName, release.TagName, fileName)
+			caption := fmt.Sprintf("📎 %s\n📦 Version: %s\n📎 File: %s", 
+				repo.Name, release.TagName, fileName)
 			
 			// Add hash if available
 			if hash, exists := fileHashes[fileName]; exists {
