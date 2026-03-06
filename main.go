@@ -215,9 +215,9 @@ func createCaption(repo Repository, release GitHubRelease, fileHashes map[string
 	caption.WriteString(fmt.Sprintf("📦 نسخه: %s\n", release.TagName))
 	caption.WriteString(fmt.Sprintf("📅 تاریخ: %s\n\n", release.PublishedAt.Format("2006-01-02 15:04:05")))
 
-	if release.Name != "" {
+	/*if release.Name != "" {
 		caption.WriteString(fmt.Sprintf("📝 نام: %s\n\n", release.Name))
-	}
+	}*/
 
 	if repo.GitHubURL != "" {
 		caption.WriteString(fmt.Sprintf("🔗 GitHub: %s\n", repo.GitHubURL))
@@ -246,7 +246,7 @@ func createCaption(repo Repository, release GitHubRelease, fileHashes map[string
 		
 		for _, filename := range filenames {
 			hash := fileHashes[filename]
-			caption.WriteString(fmt.Sprintf("📎 %s: %s\n", filename, hash))
+			caption.WriteString(fmt.Sprintf("📎 %s:\n`%s`\n", filename, hash))
 		}
 	}
 
