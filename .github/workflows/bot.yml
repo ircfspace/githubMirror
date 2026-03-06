@@ -10,10 +10,14 @@ jobs:
   run-bot:
     runs-on: ubuntu-latest
     timeout-minutes: 10 # Set timeout to 10 minutes
+    permissions:
+      contents: write
     
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
       
     - name: Setup Go
       uses: actions/setup-go@v4
@@ -39,6 +43,15 @@ jobs:
           echo "Bot completed - this is expected behavior"
           exit 0
         }
+      
+    - name: Commit processed releases
+      if: always()
+      run: |
+        git config --local user.email "github-actions[bot]@users.noreply.github.com"
+        git config --local user.name "github-actions[bot]"
+        git add processed_releases.json
+        git commit -m "Update processed releases" || echo "No changes to commit"
+        git push || echo "Nothing to push"
       
     - name: Upload processed releases
       if: always()
