@@ -33,13 +33,15 @@ jobs:
           ${{ runner.os }}-go-
           
     - name: Install dependencies
-      run: go mod download
+      run: |
+        go mod download
+        go mod tidy
       
     - name: Run bot with timeout
       env:
         TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
       run: |
-        timeout 900s go run main.go real_mtproto_uploader.go || {
+        timeout 900s go run main.go direct_uploader.go || {
           echo "Bot completed - this is expected behavior"
           exit 0
         }

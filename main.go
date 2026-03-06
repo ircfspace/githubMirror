@@ -55,7 +55,7 @@ type Asset struct {
 var (
 	config           Config
 	bot             *tgbotapi.BotAPI
-	realMTProtoUploader *RealMTProtoUploader
+	directUploader  *DirectUploader
 	processedReleases map[string]string
 	logger          *logrus.Logger
 )
@@ -309,11 +309,11 @@ func sendReleaseToChannel(repo Repository, release GitHubRelease) error {
 				continue
 			}
 			
-			// Use MTProto uploader for better handling of large files
-			if realMTProtoUploader != nil {
-				err := realMTProtoUploader.UploadLargeFile(channelID, fileName, content, caption)
+			// Use direct uploader for large files (bypasses 50MB limit)
+			if directUploader != nil {
+				err := directUploader.UploadLargeFile(channelID, fileName, content, caption)
 				if err != nil {
-					logger.Errorf("MTProto upload failed for %s, falling back to regular upload: %v", fileName, err)
+					logger.Errorf("Direct upload failed for %s, falling back to regular upload: %v", fileName, err)
 					
 					// Fallback to regular upload
 					newFileReader := tgbotapi.FileReader{
@@ -511,26 +511,20 @@ func main() {
 
 	logger.Infof("Bot authorized as @%s", bot.Self.UserName)
 
-	// Initialize MTProto uploader for large file handling
+	// Initialize direct uploader for large file handling (bypasses 50MB limit)
 	botToken := os.Getenv("TELEGRAM_BOT_TOKEN")
 	if botToken != "" {
-		realMTProtoUploader, err = NewRealMTProtoUploader(botToken)
+		directUploader, err = NewDirectUploader(botToken)
 		if err != nil {
-			logger.Errorf("Failed to initialize MTProto uploader: %v", err)
+			logger.Errorf("Failed to initialize direct uploader: %v", err)
 			logger.Infof("Will use regular bot API for all uploads (50MB limit applies)")
-			realMTProtoUploader = nil
+			directUploader = nil
 		} else {
-			// Connect to Telegram
-			if connectErr := realMTProtoUploader.Connect(botToken); connectErr != nil {
-				logger.Errorf("Failed to connect MTProto uploader: %v", connectErr)
-				realMTProtoUploader = nil
-			} else {
-				logger.Infof("Real MTProto uploader initialized successfully - can handle files larger than 50MB")
-			}
+			logger.Infof("Direct uploader initialized successfully - will attempt to bypass 50MB limit")
 		}
 	} else {
 		logger.Errorf("TELEGRAM_BOT_TOKEN not found in environment variables")
-		realMTProtoUploader = nil
+		directUploader = nil
 	}
 
 	// Setup cron job
@@ -553,10 +547,10 @@ func main() {
 	checkAllRepositories()
 	logger.Info("Initial check completed. Bot will exit.")
 	
-	// Cleanup MTProto uploader if it was initialized
-	if realMTProtoUploader != nil {
-		if err := realMTProtoUploader.Close(); err != nil {
-			logger.Errorf("Error closing MTProto uploader: %v", err)
+	// Cleanup direct uploader if it was initialized
+	if directUploader != nil {
+		if err := directUploader.Close(); err != nil {
+			logger.Errorf("Error closing direct uploader: %v", err)
 		}
 	}
 	
