@@ -22,7 +22,8 @@ import (
 
 type Config struct {
 	Telegram struct {
-		ChannelID string `json:"channel_id"`
+		ChannelID       string `json:"channel_id"`
+		ChannelUsername string `json:"channel_username"`
 	}
 	Repositories []Repository `json:"repositories"`
 }
@@ -220,7 +221,7 @@ func sendReleaseToChannel(repo Repository, release GitHubRelease) error {
 		documents = append(documents, mediaDoc)
 	}
 	
-	// Send introduction message first
+		// Send introduction message first
 	if config.Telegram.ChannelID != "0" {
 		// Create simple introduction message (English)
 		introCaption := fmt.Sprintf("🚀 New Release: %s\n\n📦 Version: %s\n📅 Date: %s\n\n🔗 GitHub: %s", 
@@ -241,8 +242,15 @@ func sendReleaseToChannel(repo Repository, release GitHubRelease) error {
 			}
 		}
 		
-		// Create inline keyboard with back button
-		channelURL := fmt.Sprintf("https://t.me/%s", strings.TrimPrefix(config.Telegram.ChannelID, "@"))
+		// Get channel username from config (should be set in config.json)
+		channelUsername := config.Telegram.ChannelUsername
+		if channelUsername == "" {
+			// Fallback: try to construct from ChannelID
+			channelUsername = strings.TrimPrefix(config.Telegram.ChannelID, "@")
+		}
+		
+		// Create inline keyboard with back button using username
+		channelURL := fmt.Sprintf("https://t.me/%s", channelUsername)
 		keyboard := [][]tgbotapi.InlineKeyboardButton{
 			{
 				{Text: "🔙 Back to Channel", URL: &channelURL},
@@ -264,9 +272,17 @@ func sendReleaseToChannel(repo Repository, release GitHubRelease) error {
 		logger.Infof("Skipping message upload - invalid channel ID")
 	}
 
-	// Send files individually (no media group)
+		// Send files individually (no media group)
 	if len(documents) > 0 {
 		channelID, _ := strconv.ParseInt(config.Telegram.ChannelID, 10, 64)
+		
+		// Create inline keyboard for files with "دریافت فایلهای بیشتر" button
+		fileKeyboard := [][]tgbotapi.InlineKeyboardButton{
+			{
+				{Text: "دریافت فایلهای بیشتر", CallbackData: &[]string{"more_files"}[0]},
+			},
+		}
+		fileReplyMarkup := tgbotapi.NewInlineKeyboardMarkup(fileKeyboard...)
 		
 		for _, doc := range documents {
 			mediaDoc := doc.(tgbotapi.InputMediaDocument)
@@ -311,6 +327,7 @@ func sendReleaseToChannel(repo Repository, release GitHubRelease) error {
 			msg := tgbotapi.NewDocument(channelID, newFileReader)
 			msg.Caption = caption
 			msg.ParseMode = "Markdown" // Enable Markdown for code formatting
+			msg.ReplyMarkup = fileReplyMarkup
 			_, sendErr := bot.Send(msg)
 			if sendErr != nil {
 				logger.Errorf("Error sending individual file %s: %v", fileName, sendErr)
