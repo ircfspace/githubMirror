@@ -55,6 +55,7 @@ type Asset struct {
 var (
 	config           Config
 	bot             *tgbotapi.BotAPI
+	mtprotoUploader *MTProtoUploader
 	processedReleases map[string]string
 	logger          *logrus.Logger
 )
@@ -249,6 +250,7 @@ func sendReleaseToChannel(repo Repository, release GitHubRelease) error {
 
 		msg := tgbotapi.NewMessageToChannel(config.Telegram.ChannelID, introCaption)
 		msg.ReplyMarkup = replyMarkup
+		msg.ParseMode = "Markdown"
 
 		_, err := bot.Send(msg)
 		if err != nil {
@@ -260,7 +262,7 @@ func sendReleaseToChannel(repo Repository, release GitHubRelease) error {
 		logger.Infof("Skipping message upload - invalid channel ID")
 	}
 
-		// Send files individually (no media group)
+		// Send files individually using MTProto uploader for large files
 	if len(documents) > 0 {
 		channelID, _ := strconv.ParseInt(config.Telegram.ChannelID, 10, 64)
 		
@@ -300,26 +302,55 @@ func sendReleaseToChannel(repo Repository, release GitHubRelease) error {
 				continue
 			}
 			
-				// Create new file reader for each upload
+			// Download file content
 			content, downloadErr := downloadFile(downloadURL)
 			if downloadErr != nil {
 				logger.Errorf("Error re-downloading %s: %v", fileName, downloadErr)
 				continue
 			}
 			
-			newFileReader := tgbotapi.FileReader{
-				Name:   fileName,
-				Reader: bytes.NewReader(content),
-			}
-			
-			msg := tgbotapi.NewDocument(channelID, newFileReader)
-			msg.Caption = caption
-			msg.ReplyMarkup = fileReplyMarkup
-			_, sendErr := bot.Send(msg)
-			if sendErr != nil {
-				logger.Errorf("Error sending individual file %s: %v", fileName, sendErr)
+			// Use MTProto uploader for better handling of large files
+			if mtprotoUploader != nil {
+				err := mtprotoUploader.UploadLargeFile(channelID, fileName, content, caption)
+				if err != nil {
+					logger.Errorf("MTProto upload failed for %s, falling back to regular upload: %v", fileName, err)
+					
+					// Fallback to regular upload
+					newFileReader := tgbotapi.FileReader{
+						Name:   fileName,
+						Reader: bytes.NewReader(content),
+					}
+					
+					msg := tgbotapi.NewDocument(channelID, newFileReader)
+					msg.Caption = caption
+					msg.ReplyMarkup = fileReplyMarkup
+					msg.ParseMode = "Markdown"
+					_, sendErr := bot.Send(msg)
+					if sendErr != nil {
+						logger.Errorf("Error sending individual file %s: %v", fileName, sendErr)
+					} else {
+						logger.Infof("Successfully sent file: %s (fallback)", fileName)
+					}
+				} else {
+					logger.Infof("Successfully sent file via MTProto: %s", fileName)
+				}
 			} else {
-				logger.Infof("Successfully sent file: %s", fileName)
+				// Regular upload if MTProto is not available
+				newFileReader := tgbotapi.FileReader{
+					Name:   fileName,
+					Reader: bytes.NewReader(content),
+				}
+				
+				msg := tgbotapi.NewDocument(channelID, newFileReader)
+				msg.Caption = caption
+				msg.ReplyMarkup = fileReplyMarkup
+				msg.ParseMode = "Markdown"
+				_, sendErr := bot.Send(msg)
+				if sendErr != nil {
+					logger.Errorf("Error sending individual file %s: %v", fileName, sendErr)
+				} else {
+					logger.Infof("Successfully sent file: %s", fileName)
+				}
 			}
 		}
 	}
@@ -480,6 +511,22 @@ func main() {
 
 	logger.Infof("Bot authorized as @%s", bot.Self.UserName)
 
+	// Initialize MTProto uploader for large file handling
+	botToken := os.Getenv("TELEGRAM_BOT_TOKEN")
+	if botToken != "" {
+		mtprotoUploader, err = NewMTProtoUploader(botToken)
+		if err != nil {
+			logger.Errorf("Failed to initialize MTProto uploader: %v", err)
+			logger.Infof("Will use regular bot API for all uploads (50MB limit applies)")
+			mtprotoUploader = nil
+		} else {
+			logger.Infof("MTProto uploader initialized successfully - can handle files larger than 50MB")
+		}
+	} else {
+		logger.Errorf("TELEGRAM_BOT_TOKEN not found in environment variables")
+		mtprotoUploader = nil
+	}
+
 	// Setup cron job
 	c := cron.New()
 	_, err = c.AddFunc("@every 6h", func() {
@@ -499,5 +546,13 @@ func main() {
 	logger.Info("Starting initial check...")
 	checkAllRepositories()
 	logger.Info("Initial check completed. Bot will exit.")
+	
+	// Cleanup MTProto uploader if it was initialized
+	if mtprotoUploader != nil {
+		if err := mtprotoUploader.Close(); err != nil {
+			logger.Errorf("Error closing MTProto uploader: %v", err)
+		}
+	}
+	
 	os.Exit(0)
 }
