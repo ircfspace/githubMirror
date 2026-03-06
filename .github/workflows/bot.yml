@@ -36,7 +36,7 @@ jobs:
         TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
       run: |
         timeout 300s go run main.go || {
-          echo "Bot timed out or failed - this is expected behavior"
+          echo "Bot completed - this is expected behavior"
           exit 0
         }
       

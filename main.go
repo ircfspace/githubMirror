@@ -1,7 +1,6 @@
 package main
 
 import (
-	"bytes"
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
@@ -247,7 +246,7 @@ func createCaption(repo Repository, release GitHubRelease, fileHashes map[string
 		
 		for _, filename := range filenames {
 			hash := fileHashes[filename]
-			caption.WriteString(fmt.Sprintf("• %s: %s\n", filename, hash))
+			caption.WriteString(fmt.Sprintf("📎 %s: %s\n", filename, hash))
 		}
 	}
 
@@ -356,29 +355,6 @@ func sendReleaseToChannel(repo Repository, release GitHubRelease) error {
 			_, err := bot.SendMediaGroup(mediaMsg)
 			if err != nil {
 				logger.Errorf("Error sending media group: %v", err)
-				// Fallback: send files individually
-				for i := range documents {
-					if i >= 10 { break }
-					content, downloadErr := downloadFile(release.Assets[i].BrowserDownloadURL)
-					if downloadErr != nil {
-						logger.Errorf("Error re-downloading %s: %v", release.Assets[i].Name, downloadErr)
-						continue
-					}
-					
-					fileReader := tgbotapi.FileReader{
-						Name:   release.Assets[i].Name,
-						Reader: bytes.NewReader(content),
-					}
-					
-					docMsg := tgbotapi.NewDocument(channelID, fileReader)
-					docMsg.Caption = fmt.Sprintf("📎 %s", release.Assets[i].Name)
-					docMsg.ParseMode = ""
-					
-					_, err = bot.Send(docMsg)
-					if err != nil {
-						logger.Errorf("Error sending individual file %s: %v", release.Assets[i].Name, err)
-					}
-				}
 			} else {
 				logger.Infof("Successfully sent media group with %d files", len(mediaGroup))
 			}
@@ -489,7 +465,13 @@ func main() {
 
 	// Setup cron job
 	c := cron.New()
-	_, err = c.AddFunc("@every 6h", checkAllRepositories)
+	_, err = c.AddFunc("@every 6h", func() {
+		logger.Info("Starting scheduled check...")
+		checkAllRepositories()
+		logger.Info("Check completed. Bot will exit after this run.")
+		// Exit after one run instead of continuous monitoring
+		os.Exit(0)
+	})
 	if err != nil {
 		log.Fatalf("Error adding cron job: %v", err)
 	}
@@ -497,7 +479,10 @@ func main() {
 	c.Start()
 
 	// Run immediately on start
+	logger.Info("Starting initial check...")
 	checkAllRepositories()
+	logger.Info("Initial check completed. Bot will exit.")
+	os.Exit(0)
 
 	// Keep the program running
 	select {}
