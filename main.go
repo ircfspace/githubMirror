@@ -231,24 +231,9 @@ func sendReleaseToChannel(repo Repository, release GitHubRelease) error {
 
 	// Send introduction message first
 	if config.Telegram.ChannelID != "0" {
-		// Create simple introduction message (English)
+		// Create simple introduction message (English) - without hashes
 		introCaption := fmt.Sprintf("🚀 New Release: %s\n\n📦 Version: %s\n📅 Date: %s\n\n🔗 GitHub: %s", 
 			repo.Name, release.TagName, release.PublishedAt.Format("2006-01-02 15:04:05"), repo.GitHubURL)
-		
-		// Add hashes to introduction
-		if len(fileHashes) > 0 {
-			introCaption += "\n\n🔒 SHA256 Hashes:"
-			var filenames []string
-			for filename := range fileHashes {
-				filenames = append(filenames, filename)
-			}
-			sort.Strings(filenames)
-			
-			for _, filename := range filenames {
-				hash := fileHashes[filename]
-				introCaption += fmt.Sprintf("\n📎 %s: `%s`", filename, hash)
-			}
-		}
 		
 		// Create inline keyboard with back button using username
 		keyboard := [][]tgbotapi.InlineKeyboardButton{
@@ -290,7 +275,7 @@ func sendReleaseToChannel(repo Repository, release GitHubRelease) error {
 			fileName := fileReader.Name
 			
 			// Caption for all files (English)
-			caption := fmt.Sprintf("📎 %s\n📦 Version: %s\n📎 File: %s", 
+			caption := fmt.Sprintf("📎 %s\n📦 Version: %s\n📎 File: `%s`", 
 				repo.Name, release.TagName, fileName)
 			
 			// Add hash if available
