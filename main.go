@@ -326,45 +326,62 @@ func sendReleaseToChannel(repo Repository, release GitHubRelease) error {
 		logger.Infof("Skipping message upload - invalid channel ID")
 	}
 
-	// Send files separately if any exist
+	// Send files as media group (max 10 files per group)
 	if len(documents) > 0 {
 		logger.Infof("Found %d files to upload", len(documents))
 		
-		// Send files as individual documents
-		for i, asset := range release.Assets {
+		// Create media group with all files
+		var mediaGroup []interface{}
+		for i, doc := range documents {
 			if i >= 10 { // Limit to 10 files
-				logger.Infof("Skipping files %d-%d (limit reached)", i+1, len(release.Assets))
+				logger.Infof("Limiting to first 10 files (found %d total)", len(documents))
 				break
 			}
 			
-			// Download file content for upload
-			content, downloadErr := downloadFile(asset.BrowserDownloadURL)
-			if downloadErr != nil {
-				logger.Errorf("Error downloading %s: %v", asset.Name, downloadErr)
-				continue
+			mediaDoc := doc.(tgbotapi.InputMediaDocument)
+			// Only first file gets caption in media group
+			if i == 0 {
+				mediaDoc.Caption = fmt.Sprintf("📎 فایل‌های %s - %s\n%s", repo.Name, release.TagName, createCaption(repo, release, fileHashes, signatures))
+			} else {
+				mediaDoc.Caption = ""
 			}
-			
-			// Create file reader for upload
-			fileReader := tgbotapi.FileReader{
-				Name:   asset.Name,
-				Reader: bytes.NewReader(content),
-			}
-			
-			// Send document to channel using numeric ID
-			if config.Telegram.ChannelID != "0" {
-				channelID, _ := strconv.ParseInt(config.Telegram.ChannelID, 10, 64)
-				docMsg := tgbotapi.NewDocument(channelID, fileReader)
-				docMsg.Caption = fmt.Sprintf("📎 %s\n%s", asset.Name, fileHashes[asset.Name])
-				docMsg.ParseMode = ""
-				
-				_, sendErr := bot.Send(docMsg)
-				if sendErr != nil {
-					logger.Errorf("Error sending file %s: %v", asset.Name, sendErr)
-				} else {
-					logger.Infof("Successfully sent file: %s", asset.Name)
+			mediaDoc.ParseMode = ""
+			mediaGroup = append(mediaGroup, mediaDoc)
+		}
+		
+		// Send media group to channel
+		if len(mediaGroup) > 0 {
+			channelID, _ := strconv.ParseInt(config.Telegram.ChannelID, 10, 64)
+			mediaMsg := tgbotapi.NewMediaGroup(channelID, mediaGroup)
+			_, err := bot.SendMediaGroup(mediaMsg)
+			if err != nil {
+				logger.Errorf("Error sending media group: %v", err)
+				// Fallback: send files individually
+				for i, doc := range documents {
+					if i >= 10 { break }
+					mediaDoc := doc.(tgbotapi.InputMediaDocument)
+					content, downloadErr := downloadFile(release.Assets[i].BrowserDownloadURL)
+					if downloadErr != nil {
+						logger.Errorf("Error re-downloading %s: %v", release.Assets[i].Name, downloadErr)
+						continue
+					}
+					
+					fileReader := tgbotapi.FileReader{
+						Name:   release.Assets[i].Name,
+						Reader: bytes.NewReader(content),
+					}
+					
+					docMsg := tgbotapi.NewDocument(channelID, fileReader)
+					docMsg.Caption = fmt.Sprintf("📎 %s", release.Assets[i].Name)
+					docMsg.ParseMode = ""
+					
+					_, err = bot.Send(docMsg)
+					if err != nil {
+						logger.Errorf("Error sending individual file %s: %v", release.Assets[i].Name, err)
+					}
 				}
 			} else {
-				logger.Infof("Skipping file upload - invalid channel ID")
+				logger.Infof("Successfully sent media group with %d files", len(mediaGroup))
 			}
 		}
 	}
@@ -422,6 +439,13 @@ func checkAllRepositories() {
 			continue
 		} else {
 			logger.Infof("Release sent successfully")
+		}
+		
+		// Check if any repository failed
+		if repo.Name == "SlipNet" {
+			logger.Infof("All repositories processed. Bot will continue monitoring...")
+			// Exit gracefully after processing all repositories
+			return
 		}
 	}
 }
