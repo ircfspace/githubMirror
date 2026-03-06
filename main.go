@@ -256,10 +256,10 @@ func sendReleaseToChannel(repo Repository, release GitHubRelease) error {
 	if len(documents) > 0 {
 		channelID, _ := strconv.ParseInt(config.Telegram.ChannelID, 10, 64)
 		
-		// Create inline keyboard for files with "دریافت فایل‌های بیشتر" button linking to channel
+		// Create inline keyboard for files with "فایل‌های بیشتر" button linking to channel
 		fileKeyboard := [][]tgbotapi.InlineKeyboardButton{
 			{
-				{Text: "فایل‌های بیشتر", URL: &channelURL},
+				{Text: "📎 فایل‌های بیشتر", URL: &channelURL},
 			},
 		}
 		fileReplyMarkup := tgbotapi.NewInlineKeyboardMarkup(fileKeyboard...)
@@ -296,12 +296,6 @@ func sendReleaseToChannel(repo Repository, release GitHubRelease) error {
 			content, downloadErr := downloadFile(downloadURL)
 			if downloadErr != nil {
 				logger.Errorf("Error re-downloading %s: %v", fileName, downloadErr)
-				continue
-			}
-			
-			// Check file size (skip if > 20MB)
-			if len(content) > 20*1024*1024 {
-				logger.Infof("Skipping large file %s (%d bytes), only sending small files", fileName, len(content))
 				continue
 			}
 			
@@ -375,12 +369,6 @@ func checkAllRepositories() {
 			continue
 		} else {
 			logger.Infof("Release sent successfully")
-		}
-		
-		// Check if any repository failed
-		if repo.Name == "SlipNet" {
-			logger.Infof("All repositories processed. Bot will continue monitoring...")
-			// Continue to next repositories instead of returning
 		}
 	}
 }
