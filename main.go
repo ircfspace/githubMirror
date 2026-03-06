@@ -265,8 +265,7 @@ func sendReleaseToChannel(repo Repository, release GitHubRelease) error {
 	logger.Infof("Release %s is new, processing...", releaseID)
 	fileHashes := make(map[string]string)
 	signatures := make(map[string]bool)
-	var documents []interface{}
-
+	
 	logger.Infof("Found %d assets in release", len(release.Assets))
 	// Download and process release assets
 	for _, asset := range release.Assets {
@@ -285,120 +284,66 @@ func sendReleaseToChannel(repo Repository, release GitHubRelease) error {
 			if sigAsset.Name == asset.Name+".sig" || sigAsset.Name == asset.Name+".asc" {
 				sigContent, err := downloadFile(sigAsset.BrowserDownloadURL)
 				if err == nil {
-					isValid, _ := verifyPGPSignature(content, sigContent)
-					signatures[asset.Name] = isValid
-				}
-				break
-			}
-		}
 
-		// Create document for Telegram
-		doc := tgbotapi.NewInputMediaDocument(tgbotapi.FileBytes{
-			Name:  asset.Name,
-			Bytes: content,
-		})
-		documents = append(documents, doc)
-	}
+    // Create media group with all files
+    var documents []interface{}
+    for i, asset := range release.Assets {
+        if i >= 10 { // Limit to 10 files
+            logger.Infof("Limiting to first 10 files (found %d total)", len(release.Assets))
+            break
+        }
+        
+        content, downloadErr := downloadFile(asset.BrowserDownloadURL)
+        if downloadErr != nil {
+            logger.Errorf("Error re-downloading %s: %v", asset.Name, downloadErr)
+            continue
+        }
+        
+        // Create file reader for upload
+        fileReader := tgbotapi.FileReader{
+            Name:   asset.Name,
+            Reader: bytes.NewReader(content),
+        }
+        
+        mediaDoc := tgbotapi.InputMediaDocument{
+            Media: fileReader,
+            Caption: "",
+            ParseMode: "",
+        }
+        
+        // Only first file gets caption in media group
+        if i == 0 {
+            mediaDoc.Caption = fmt.Sprintf("📎 فایل‌های %s - %s\n%s", repo.Name, release.TagName, createCaption(repo, release, fileHashes, signatures))
+        }
+        
+        documents = append(documents, mediaDoc)
+    }
+    
+    // Send media group to channel
+    if len(documents) > 0 {
+        // Create media group with all files
+        var mediaGroup []interface{}
+        for i := range documents {
+            mediaDoc := documents[i].(tgbotapi.InputMediaDocument)
+            mediaGroup = append(mediaGroup, mediaDoc)
+        }
+        
+        channelID, _ := strconv.ParseInt(config.Telegram.ChannelID, 10, 64)
+        mediaMsg := tgbotapi.NewMediaGroup(channelID, mediaGroup)
+        _, err := bot.SendMediaGroup(mediaMsg)
+        if err != nil {
+            logger.Errorf("Error sending media group: %v", err)
+        } else {
+            logger.Infof("Successfully sent media group with %d files", len(mediaGroup))
+        }
+    }
 
-	caption := createCaption(repo, release, fileHashes, signatures)
-
-	// Create inline keyboard with back button
-	channelURL := fmt.Sprintf("https://t.me/%s", strings.TrimPrefix(config.Telegram.ChannelID, "@"))
-	keyboard := [][]tgbotapi.InlineKeyboardButton{
-		{
-			{Text: "🔙 بازگشت به کانال", URL: &channelURL},
-		},
-	}
-	replyMarkup := tgbotapi.NewInlineKeyboardMarkup(keyboard...)
-
-	// Send as text message with file info
-	if config.Telegram.ChannelID != "0" {
-		msg := tgbotapi.NewMessageToChannel(config.Telegram.ChannelID, caption)
-		msg.ParseMode = "" // Remove Markdown to avoid parsing errors
-		msg.ReplyMarkup = replyMarkup
-
-		_, err := bot.Send(msg)
-		if err != nil {
-			return fmt.Errorf("error sending message: %w", err)
-		}
-	} else {
-		logger.Infof("Skipping message upload - invalid channel ID")
-	}
-
-	// Send files as media group (max 10 files per group)
-	if len(documents) > 0 {
-		logger.Infof("Found %d files to upload", len(documents))
-		
-		// Create media group with all files
-		var mediaGroup []interface{}
-		for i := range documents {
-			if i >= 10 { // Limit to 10 files
-				logger.Infof("Limiting to first 10 files (found %d total)", len(documents))
-				break
-			}
-			
-			mediaDoc := documents[i].(tgbotapi.InputMediaDocument)
-			// Only first file gets caption in media group
-			if i == 0 {
-				mediaDoc.Caption = fmt.Sprintf("📎 فایل‌های %s - %s\n%s", repo.Name, release.TagName, createCaption(repo, release, fileHashes, signatures))
-			} else {
-				mediaDoc.Caption = ""
-			}
-			mediaDoc.ParseMode = ""
-			mediaGroup = append(mediaGroup, mediaDoc)
-		}
-		
-		// Send media group to channel
-		if len(mediaGroup) > 0 {
-			channelID, _ := strconv.ParseInt(config.Telegram.ChannelID, 10, 64)
-			mediaMsg := tgbotapi.NewMediaGroup(channelID, mediaGroup)
-			_, err := bot.SendMediaGroup(mediaMsg)
-			if err != nil {
-				logger.Errorf("Error sending media group: %v", err)
-			} else {
-				logger.Infof("Successfully sent media group with %d files", len(mediaGroup))
-			}
-		}
-	}
-
-	// Mark as processed
-	processedReleases[releaseID] = time.Now().Format(time.RFC3339)
-	saveErr := saveProcessedReleases()
-	if saveErr != nil {
-		logger.Errorf("Error saving processed releases: %v", saveErr)
-	}
-
-	logger.Infof("Successfully sent release %s to channel", releaseID)
-	return nil
-}
-
-func checkAllRepositories() {
-	logger.Info("Checking all repositories for new releases")
-	
-	for _, repo := range config.Repositories {
-		logger.Infof("Checking repository: %s", repo.Name)
-		releases, err := getGitHubReleases(repo.GitHubURL)
-		if err != nil {
-			logger.Errorf("Error fetching releases for %s: %v", repo.GitHubURL, err)
-			continue
-		}
-		
-		logger.Infof("Found %d releases for %s", len(releases), repo.Name)
-		
-		if len(releases) == 0 {
-			logger.Infof("No releases found for %s", repo.Name)
-			continue
-		}
-		
-		// Get the latest non-draft release
-		var latestRelease *GitHubRelease
-		for _, release := range releases {
-			if !release.Draft {
-				latestRelease = &release
-				break
-			}
-		}
-		
+    // Add release to processed releases
+    processedReleases[releaseID] = true
+    err = saveProcessedReleases()
+    if err != nil {
+        logger.Errorf("Error saving processed releases: %v", err)
+    }
 		if latestRelease == nil {
 			logger.Infof("No non-draft releases found for %s", repo.Name)
 			continue
