@@ -215,10 +215,7 @@ func sendReleaseToChannel(repo Repository, release GitHubRelease) error {
 		// Create media document using NewInputMediaDocument
 		mediaDoc := tgbotapi.NewInputMediaDocument(fileReader)
 		
-		// Only first file gets caption in media group
-		if i == 0 {
-			mediaDoc.Caption = fmt.Sprintf("📎 فایل‌های %s - %s\n%s", repo.Name, release.TagName, createCaption(repo, release, fileHashes))
-		}
+		// No caption for media group files - will be sent separately
 		
 		documents = append(documents, mediaDoc)
 	}
@@ -267,79 +264,63 @@ func sendReleaseToChannel(repo Repository, release GitHubRelease) error {
 		logger.Infof("Skipping message upload - invalid channel ID")
 	}
 
-	// Send media group to channel
+	// Send files individually (no media group)
 	if len(documents) > 0 {
-		// Create media group with all files
-		var mediaGroup []interface{}
-		for i := range documents {
-			mediaDoc := documents[i].(tgbotapi.InputMediaDocument)
-			mediaGroup = append(mediaGroup, mediaDoc)
-		}
-		
 		channelID, _ := strconv.ParseInt(config.Telegram.ChannelID, 10, 64)
-		mediaMsg := tgbotapi.NewMediaGroup(channelID, mediaGroup)
-		_, err := bot.SendMediaGroup(mediaMsg)
-		if err != nil {
-			logger.Errorf("Error sending media group: %v", err)
-			logger.Infof("Falling back to individual file uploads...")
+		
+		for i, doc := range documents {
+			mediaDoc := doc.(tgbotapi.InputMediaDocument)
+			fileReader := mediaDoc.Media.(tgbotapi.FileReader)
+			fileName := fileReader.Name
 			
-			// Fallback: send files individually
-			for i, doc := range documents {
-				mediaDoc := doc.(tgbotapi.InputMediaDocument)
-				fileReader := mediaDoc.Media.(tgbotapi.FileReader)
-				fileName := fileReader.Name
-				
-				// Simple caption for individual files
-				var caption string
-				if i == 0 {
-					caption = fmt.Sprintf("📎 %s - %s\n\n📦 نسخه: %s\n📎 فایل: %s", 
-						repo.Name, release.TagName, release.TagName, fileName)
-				} else {
-					caption = fmt.Sprintf("📎 %s", fileName)
-				}
-				
-				// Add hash if available
-				if hash, exists := fileHashes[fileName]; exists {
-					caption += fmt.Sprintf("\n🔒 SHA256: `%s`", hash)
-				}
-				
-				// Find the corresponding asset to get download URL
-				var downloadURL string
-				for _, asset := range release.Assets {
-					if asset.Name == fileName {
-						downloadURL = asset.BrowserDownloadURL
-						break
-					}
-				}
-				
-				if downloadURL == "" {
-					logger.Errorf("Could not find download URL for file: %s", fileName)
-					continue
-				}
-				
-				// Create new file reader for each upload
-				content, downloadErr := downloadFile(downloadURL)
-				if downloadErr != nil {
-					logger.Errorf("Error re-downloading %s: %v", fileName, downloadErr)
-					continue
-				}
-				
-				newFileReader := tgbotapi.FileReader{
-					Name:   fileName,
-					Reader: bytes.NewReader(content),
-				}
-				
-				msg := tgbotapi.NewDocument(channelID, newFileReader)
-				msg.Caption = caption
-				_, sendErr := bot.Send(msg)
-				if sendErr != nil {
-					logger.Errorf("Error sending individual file %s: %v", fileName, sendErr)
-				} else {
-					logger.Infof("Successfully sent file: %s", fileName)
+			// Simple caption for individual files
+			var caption string
+			if i == 0 {
+				caption = fmt.Sprintf("📎 %s - %s\n\n📦 نسخه: %s\n📎 فایل: %s", 
+					repo.Name, release.TagName, release.TagName, fileName)
+			} else {
+				caption = fmt.Sprintf("📎 %s", fileName)
+			}
+			
+			// Add hash if available
+			if hash, exists := fileHashes[fileName]; exists {
+				caption += fmt.Sprintf("\n🔒 SHA256: `%s`", hash)
+			}
+			
+			// Find the corresponding asset to get download URL
+			var downloadURL string
+			for _, asset := range release.Assets {
+				if asset.Name == fileName {
+					downloadURL = asset.BrowserDownloadURL
+					break
 				}
 			}
-		} else {
-			logger.Infof("Successfully sent media group with %d files", len(mediaGroup))
+			
+			if downloadURL == "" {
+				logger.Errorf("Could not find download URL for file: %s", fileName)
+				continue
+			}
+			
+			// Create new file reader for each upload
+			content, downloadErr := downloadFile(downloadURL)
+			if downloadErr != nil {
+				logger.Errorf("Error re-downloading %s: %v", fileName, downloadErr)
+				continue
+			}
+			
+			newFileReader := tgbotapi.FileReader{
+				Name:   fileName,
+				Reader: bytes.NewReader(content),
+			}
+			
+			msg := tgbotapi.NewDocument(channelID, newFileReader)
+			msg.Caption = caption
+			_, sendErr := bot.Send(msg)
+			if sendErr != nil {
+				logger.Errorf("Error sending individual file %s: %v", fileName, sendErr)
+			} else {
+				logger.Infof("Successfully sent file: %s", fileName)
+			}
 		}
 	}
 
@@ -462,6 +443,12 @@ func main() {
 	
 	// Initialize processed releases
 	processedReleases = make(map[string]string)
+	
+	// Load existing processed releases
+	loadErr := loadProcessedReleases()
+	if loadErr != nil {
+		logger.Infof("No existing processed releases file found, starting fresh")
+	}
 	
 	// Check if channel ID is numeric
 	if strings.HasPrefix(config.Telegram.ChannelID, "@") {
