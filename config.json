@@ -12,8 +12,113 @@
       "microsoft_store_url": ""
     },
     {
+      "name": "Oblivion Desktop",
+      "github_url": "https://github.com/bepass-org/oblivion-desktop",
+      "google_play_url": "",
+      "apple_store_url": "",
+      "microsoft_store_url": ""
+    },
+    {
+      "name": "Defyx VPN",
+      "github_url": "https://github.com/UnboundTechCo/defyxVPN",
+      "google_play_url": "",
+      "apple_store_url": "",
+      "microsoft_store_url": ""
+    },
+    {
+      "name": "Hiddify",
+      "github_url": "https://github.com/hiddify/hiddify-app",
+      "google_play_url": "",
+      "apple_store_url": "",
+      "microsoft_store_url": ""
+    },
+    {
+      "name": "MahsaNG",
+      "github_url": "https://github.com/GFW-knocker/MahsaNG",
+      "google_play_url": "",
+      "apple_store_url": "",
+      "microsoft_store_url": ""
+    },
+    {
       "name": "SlipNet",
       "github_url": "https://github.com/anonvector/SlipNet",
+      "google_play_url": "",
+      "apple_store_url": "",
+      "microsoft_store_url": ""
+    },
+    {
+      "name": "NoizDNS Deploy",
+      "github_url": "https://github.com/anonvector/noizdns-deploy",
+      "google_play_url": "",
+      "apple_store_url": "",
+      "microsoft_store_url": ""
+    },
+    {
+      "name": "DNS tunnel load balancer",
+      "github_url": "https://github.com/aleskxyz/dns-tun-lb",
+      "google_play_url": "",
+      "apple_store_url": "",
+      "microsoft_store_url": ""
+    },
+    {
+      "name": "Slipstream Plus",
+      "github_url": "https://github.com/payeh/Slipstreamplus",
+      "google_play_url": "",
+      "apple_store_url": "",
+      "microsoft_store_url": ""
+    },
+    {
+      "name": "Shiro Khorshid",
+      "github_url": "https://github.com/shirokhorshid/shirokhorshid-android",
+      "google_play_url": "",
+      "apple_store_url": "",
+      "microsoft_store_url": ""
+    },
+    {
+      "name": "IRBox",
+      "github_url": "https://github.com/frank-vpl/IRBox",
+      "google_play_url": "",
+      "apple_store_url": "",
+      "microsoft_store_url": ""
+    },
+    {
+      "name": "Xray Knife",
+      "github_url": "https://github.com/lilendian0x00/xray-knife",
+      "google_play_url": "",
+      "apple_store_url": "",
+      "microsoft_store_url": ""
+    },
+    {
+      "name": "CG BPB",
+      "github_url": "https://github.com/Devtahas/CG_BPB",
+      "google_play_url": "",
+      "apple_store_url": "",
+      "microsoft_store_url": ""
+    },
+    {
+      "name": "CF IP Scanner",
+      "github_url": "https://github.com/tayden1990/CF-IP-Scanner",
+      "google_play_url": "",
+      "apple_store_url": "",
+      "microsoft_store_url": ""
+    },
+    {
+      "name": "Rostam Media",
+      "github_url": "https://github.com/Ma5t3rful/rostam-media",
+      "google_play_url": "",
+      "apple_store_url": "",
+      "microsoft_store_url": ""
+    },
+    {
+      "name": "PYDNS Scanner",
+      "github_url": "https://github.com/xullexer/PYDNS-Scanner",
+      "google_play_url": "",
+      "apple_store_url": "",
+      "microsoft_store_url": ""
+    },
+    {
+      "name": "Zemzeme",
+      "github_url": "https://github.com/whisperbit-labs/zemzeme-android",
       "google_play_url": "",
       "apple_store_url": "",
       "microsoft_store_url": ""
