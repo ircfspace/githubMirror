@@ -383,15 +383,23 @@ func getGitHubReleases(repoURL string) ([]GitHubRelease, error) {
 	owner := parts[3]
 	repoName := parts[4]
 	
+	// Get releases from GitHub API
+	apiURL := fmt.Sprintf("https://api.github.com/repos/%s/%s/releases", owner, repoName)
+	
 	// Create HTTP client with timeout
 	client := &http.Client{
 		Timeout: 30 * time.Second,
 	}
 	
-	// Get releases from GitHub API
-	apiURL := fmt.Sprintf("https://api.github.com/repos/%s/%s/releases", owner, repoName)
+	// Create request with User-Agent to avoid 403
+	req, err := http.NewRequest("GET", apiURL, nil)
+	if err != nil {
+		return nil, fmt.Errorf("error creating request: %w", err)
+	}
+	req.Header.Set("User-Agent", "GitHub-Release-Bot/1.0")
 	
-	resp, err := client.Get(apiURL)
+	// Get releases from GitHub API
+	resp, err := client.Do(req)
 	if err != nil {
 		return nil, fmt.Errorf("error fetching releases: %w", err)
 	}
@@ -416,7 +424,14 @@ func downloadFile(url string) ([]byte, error) {
 		Timeout: 60 * time.Second, // Longer timeout for file downloads
 	}
 	
-	resp, err := client.Get(url)
+	// Create request with User-Agent to avoid 403
+	req, err := http.NewRequest("GET", url, nil)
+	if err != nil {
+		return nil, err
+	}
+	req.Header.Set("User-Agent", "GitHub-Release-Bot/1.0")
+	
+	resp, err := client.Do(req)
 	if err != nil {
 		return nil, err
 	}
