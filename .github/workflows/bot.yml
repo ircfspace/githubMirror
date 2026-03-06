@@ -22,15 +22,13 @@ jobs:
     - name: Cache Go modules
       uses: actions/cache@v3
       with:
-        path: |
-          ~/.cache/go-build
-          ~/go/pkg/mod
+        path: ~/go/pkg/mod
         key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
         restore-keys: |
           ${{ runner.os }}-go-
           
     - name: Install dependencies
-      run: go mod tidy
+      run: go mod download
       
     - name: Run bot
       env:
@@ -38,8 +36,9 @@ jobs:
       run: go run main.go
       
     - name: Upload processed releases
-      uses: actions/upload-artifact@v3
       if: always()
+      uses: actions/upload-artifact@v4
       with:
         name: processed-releases
         path: processed_releases.json
+        retention-days: 30
