@@ -223,6 +223,50 @@ func sendReleaseToChannel(repo Repository, release GitHubRelease) error {
 		documents = append(documents, mediaDoc)
 	}
 	
+	// Send introduction message first
+	if config.Telegram.ChannelID != "0" {
+		// Create simple introduction message
+		introCaption := fmt.Sprintf("🚀 ریلیز جدید: %s\n\n📦 نسخه: %s\n📅 تاریخ: %s\n\n🔗 GitHub: %s", 
+			repo.Name, release.TagName, release.PublishedAt.Format("2006-01-02 15:04:05"), repo.GitHubURL)
+		
+		// Add hashes to introduction
+		if len(fileHashes) > 0 {
+			introCaption += "\n\n🔒 هش‌های SHA256:"
+			var filenames []string
+			for filename := range fileHashes {
+				filenames = append(filenames, filename)
+			}
+			sort.Strings(filenames)
+			
+			for _, filename := range filenames {
+				hash := fileHashes[filename]
+				introCaption += fmt.Sprintf("\n📎 %s: `%s`", filename, hash)
+			}
+		}
+		
+		// Create inline keyboard with back button
+		channelURL := fmt.Sprintf("https://t.me/%s", strings.TrimPrefix(config.Telegram.ChannelID, "@"))
+		keyboard := [][]tgbotapi.InlineKeyboardButton{
+			{
+				{Text: "🔙 بازگشت به کانال", URL: &channelURL},
+			},
+		}
+		replyMarkup := tgbotapi.NewInlineKeyboardMarkup(keyboard...)
+
+		msg := tgbotapi.NewMessageToChannel(config.Telegram.ChannelID, introCaption)
+		msg.ParseMode = "" // Remove Markdown to avoid parsing errors
+		msg.ReplyMarkup = replyMarkup
+
+		_, err := bot.Send(msg)
+		if err != nil {
+			logger.Errorf("Error sending introduction message: %v", err)
+		} else {
+			logger.Infof("Successfully sent introduction message")
+		}
+	} else {
+		logger.Infof("Skipping message upload - invalid channel ID")
+	}
+
 	// Send media group to channel
 	if len(documents) > 0 {
 		// Create media group with all files
@@ -297,29 +341,6 @@ func sendReleaseToChannel(repo Repository, release GitHubRelease) error {
 		} else {
 			logger.Infof("Successfully sent media group with %d files", len(mediaGroup))
 		}
-	}
-
-	// Create inline keyboard with back button
-	channelURL := fmt.Sprintf("https://t.me/%s", strings.TrimPrefix(config.Telegram.ChannelID, "@"))
-	keyboard := [][]tgbotapi.InlineKeyboardButton{
-		{
-			{Text: "🔙 بازگشت به کانال", URL: &channelURL},
-		},
-	}
-	replyMarkup := tgbotapi.NewInlineKeyboardMarkup(keyboard...)
-
-	// Send as text message with file info
-	if config.Telegram.ChannelID != "0" {
-		msg := tgbotapi.NewMessageToChannel(config.Telegram.ChannelID, createCaption(repo, release, fileHashes))
-		msg.ParseMode = "" // Remove Markdown to avoid parsing errors
-		msg.ReplyMarkup = replyMarkup
-
-		_, err := bot.Send(msg)
-		if err != nil {
-			return fmt.Errorf("error sending message: %w", err)
-		}
-	} else {
-		logger.Infof("Skipping message upload - invalid channel ID")
 	}
 
 	// Mark as processed
