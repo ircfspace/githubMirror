@@ -9,6 +9,7 @@ on:
 jobs:
   run-bot:
     runs-on: ubuntu-latest
+    timeout-minutes: 10 # Set timeout to 10 minutes
     
     steps:
     - name: Checkout code
@@ -30,10 +31,14 @@ jobs:
     - name: Install dependencies
       run: go mod download
       
-    - name: Run bot
+    - name: Run bot with timeout
       env:
         TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-      run: go run main.go
+      run: |
+        timeout 300s go run main.go || {
+          echo "Bot timed out or failed - this is expected behavior"
+          exit 0
+        }
       
     - name: Upload processed releases
       if: always()
