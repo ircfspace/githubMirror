@@ -332,13 +332,13 @@ func sendReleaseToChannel(repo Repository, release GitHubRelease) error {
 		
 		// Create media group with all files
 		var mediaGroup []interface{}
-		for i, doc := range documents {
+		for i := range documents {
 			if i >= 10 { // Limit to 10 files
 				logger.Infof("Limiting to first 10 files (found %d total)", len(documents))
 				break
 			}
 			
-			mediaDoc := doc.(tgbotapi.InputMediaDocument)
+			mediaDoc := documents[i].(tgbotapi.InputMediaDocument)
 			// Only first file gets caption in media group
 			if i == 0 {
 				mediaDoc.Caption = fmt.Sprintf("📎 فایل‌های %s - %s\n%s", repo.Name, release.TagName, createCaption(repo, release, fileHashes, signatures))
@@ -357,9 +357,8 @@ func sendReleaseToChannel(repo Repository, release GitHubRelease) error {
 			if err != nil {
 				logger.Errorf("Error sending media group: %v", err)
 				// Fallback: send files individually
-				for i, doc := range documents {
+				for i := range documents {
 					if i >= 10 { break }
-					mediaDoc := doc.(tgbotapi.InputMediaDocument)
 					content, downloadErr := downloadFile(release.Assets[i].BrowserDownloadURL)
 					if downloadErr != nil {
 						logger.Errorf("Error re-downloading %s: %v", release.Assets[i].Name, downloadErr)
