@@ -237,6 +237,27 @@ func sendReleaseToChannel(repo Repository, release GitHubRelease) error {
 		_, err := bot.SendMediaGroup(mediaMsg)
 		if err != nil {
 			logger.Errorf("Error sending media group: %v", err)
+			logger.Infof("Falling back to individual file uploads...")
+			
+			// Fallback: send files individually
+			for i, doc := range documents {
+				mediaDoc := doc.(tgbotapi.InputMediaDocument)
+				// Only first file gets caption
+				if i == 0 {
+					mediaDoc.Caption = fmt.Sprintf("📎 فایل‌های %s - %s\n%s", repo.Name, release.TagName, createCaption(repo, release, fileHashes))
+				} else {
+					mediaDoc.Caption = ""
+				}
+				
+				msg := tgbotapi.NewDocument(channelID, mediaDoc.Media)
+				msg.Caption = mediaDoc.Caption
+				_, sendErr := bot.Send(msg)
+				if sendErr != nil {
+					logger.Errorf("Error sending individual file %s: %v", mediaDoc.Media.(tgbotapi.FileReader).Name, sendErr)
+				} else {
+					logger.Infof("Successfully sent file: %s", mediaDoc.Media.(tgbotapi.FileReader).Name)
+				}
+			}
 		} else {
 			logger.Infof("Successfully sent media group with %d files", len(mediaGroup))
 		}
