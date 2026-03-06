@@ -382,6 +382,9 @@ func main() {
 		log.Fatalf("Error loading config: %v", err)
 	}
 	
+	// Initialize processed releases
+	processedReleases = make(map[string]string)
+	
 	// Check if channel ID is numeric
 	if strings.HasPrefix(config.Telegram.ChannelID, "@") {
 		logger.Errorf("Channel ID must be numeric, not username")
