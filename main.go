@@ -268,19 +268,14 @@ func sendReleaseToChannel(repo Repository, release GitHubRelease) error {
 	if len(documents) > 0 {
 		channelID, _ := strconv.ParseInt(config.Telegram.ChannelID, 10, 64)
 		
-		for i, doc := range documents {
+		for _, doc := range documents {
 			mediaDoc := doc.(tgbotapi.InputMediaDocument)
 			fileReader := mediaDoc.Media.(tgbotapi.FileReader)
 			fileName := fileReader.Name
 			
-			// Simple caption for individual files (English)
-			var caption string
-			if i == 0 {
-				caption = fmt.Sprintf("📎 %s - %s\n\n📦 Version: %s\n📎 File: %s", 
-					repo.Name, release.TagName, release.TagName, fileName)
-			} else {
-				caption = fmt.Sprintf("📎 %s", fileName)
-			}
+			// Caption for all files (English)
+			caption := fmt.Sprintf("📎 %s - %s\n\n📦 Version: %s\n📎 File: %s", 
+				repo.Name, release.TagName, release.TagName, fileName)
 			
 			// Add hash if available
 			if hash, exists := fileHashes[fileName]; exists {
