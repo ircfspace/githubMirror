@@ -193,13 +193,9 @@ func sendReleaseToChannel(repo Repository, release GitHubRelease) error {
 		fileHashes[asset.Name] = fileHash
 	}
 
-	// Create media group with all files
+	// Create documents for all files (no limit)
 	var documents []interface{}
-	for i, asset := range release.Assets {
-		if i >= 10 { // Limit to 10 files
-			logger.Infof("Limiting to first 10 files (found %d total)", len(release.Assets))
-			break
-		}
+	for _, asset := range release.Assets {
 		
 		content, downloadErr := downloadFile(asset.BrowserDownloadURL)
 		if downloadErr != nil {
@@ -244,7 +240,6 @@ func sendReleaseToChannel(repo Repository, release GitHubRelease) error {
 		replyMarkup := tgbotapi.NewInlineKeyboardMarkup(keyboard...)
 
 		msg := tgbotapi.NewMessageToChannel(config.Telegram.ChannelID, introCaption)
-		msg.ParseMode = "Markdown" // Enable Markdown for code formatting
 		msg.ReplyMarkup = replyMarkup
 
 		_, err := bot.Send(msg)
@@ -297,10 +292,16 @@ func sendReleaseToChannel(repo Repository, release GitHubRelease) error {
 				continue
 			}
 			
-			// Create new file reader for each upload
+				// Create new file reader for each upload
 			content, downloadErr := downloadFile(downloadURL)
 			if downloadErr != nil {
 				logger.Errorf("Error re-downloading %s: %v", fileName, downloadErr)
+				continue
+			}
+			
+			// Check file size (skip if > 20MB)
+			if len(content) > 20*1024*1024 {
+				logger.Infof("Skipping large file %s (%d bytes), only sending small files", fileName, len(content))
 				continue
 			}
 			
@@ -311,7 +312,6 @@ func sendReleaseToChannel(repo Repository, release GitHubRelease) error {
 			
 			msg := tgbotapi.NewDocument(channelID, newFileReader)
 			msg.Caption = caption
-			msg.ParseMode = "Markdown" // Enable Markdown for code formatting
 			msg.ReplyMarkup = fileReplyMarkup
 			_, sendErr := bot.Send(msg)
 			if sendErr != nil {
@@ -380,8 +380,7 @@ func checkAllRepositories() {
 		// Check if any repository failed
 		if repo.Name == "SlipNet" {
 			logger.Infof("All repositories processed. Bot will continue monitoring...")
-			// Exit gracefully after processing all repositories
-			return
+			// Continue to next repositories instead of returning
 		}
 	}
 }
