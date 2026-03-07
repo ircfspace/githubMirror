@@ -38,20 +38,14 @@ func (m *MTProtoClient) Connect() error {
 func (m *MTProtoClient) UploadFileToChannel(channelID int64, fileName string, fileContent []byte, caption string) error {
 	return m.client.Run(m.ctx, func(ctx context.Context) error {
 		// Upload file using MTProto - NO 50MB LIMIT!
-		upload, err := m.client.Upload().UploadBigFile(ctx, fileName, len(fileContent))
+		upload := telegram.NewUpload(m.client, telegram.UploadOptions{})
+		
+		uploadedFile, err := upload.UploadFile(ctx, &tg.InputFile{
+			Name: fileName,
+			Data: fileContent,
+		})
 		if err != nil {
-			return fmt.Errorf("failed to start upload: %w", err)
-		}
-
-		// Upload file parts
-		_, err = upload.Write(fileContent)
-		if err != nil {
-			return fmt.Errorf("failed to upload file content: %w", err)
-		}
-
-		uploadedFile, err := upload.Result()
-		if err != nil {
-			return fmt.Errorf("failed to get upload result: %w", err)
+			return fmt.Errorf("failed to upload file: %w", err)
 		}
 
 		logger.Infof("File uploaded successfully via MTProto: %s (%d bytes)", fileName, len(fileContent))
@@ -62,12 +56,15 @@ func (m *MTProtoClient) UploadFileToChannel(channelID int64, fileName string, fi
 		}
 
 		// Send document to channel
-		_, err = m.client.API().MessagesSendDocument(ctx, &tg.MessagesSendDocumentRequest{
-			Peer:    peer,
+		req := &tg.MessagesSendMediaRequest{
+			Peer: peer,
+			Media: &tg.InputMediaDocument{
+				ID: uploadedFile,
+			},
 			Message: caption,
-			File:    uploadedFile,
-		})
+		}
 
+		_, err = m.client.Send(ctx, req)
 		if err != nil {
 			return fmt.Errorf("failed to send document: %w", err)
 		}
@@ -78,8 +75,5 @@ func (m *MTProtoClient) UploadFileToChannel(channelID int64, fileName string, fi
 }
 
 func (m *MTProtoClient) Close() error {
-	if m.client != nil {
-		return m.client.Close()
-	}
-	return nil
+	return m.client.Close()
 }
