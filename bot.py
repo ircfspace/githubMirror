@@ -223,11 +223,19 @@ class GitHubReleaseBot:
                     logger.info(f"File size: {os.path.getsize(temp_file_path)} bytes")
                     logger.info(f"Starting upload to Telegram...")
                     
+                    # Create progress callback for upload
+                    def upload_progress(current, total):
+                        if total > 0:
+                            percent = (current / total) * 100
+                            if percent % 5 == 0 and percent > 0:  # Log every 5%
+                                logger.info(f"Uploading {asset_name}: [{'=' * int(percent // 5)}{' ' * (20 - int(percent // 5))}] {percent:.1f}%")
+                    
                     # First upload the file to get a file handle
                     logger.info(f"Uploading file with upload_file method...")
                     uploaded_file = await self.client.upload_file(
                         temp_file_path,
-                        file_name=asset_name
+                        file_name=asset_name,
+                        progress_callback=upload_progress
                     )
                     logger.info(f"File uploaded successfully: {uploaded_file}")
                     
