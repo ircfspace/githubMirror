@@ -378,12 +378,15 @@ class GitHubReleaseBot:
             
             # Run immediately
             await self.check_all_repositories()
-            logger.info("Initial check completed")
+            logger.info("All repositories checked successfully - Bot execution completed")
+            logger.info("Exiting gracefully...")
             
         except Exception as e:
             logger.error(f"Error running bot: {e}")
+            raise  # Re-raise to ensure non-zero exit code on error
         finally:
             await self.client.disconnect()
+            logger.info("Bot disconnected and shut down")
 
 if __name__ == "__main__":
     bot = GitHubReleaseBot()
