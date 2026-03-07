@@ -323,9 +323,10 @@ class GitHubReleaseBot:
         message_text += "وضعیت آخرین بروزرسانی برنامه‌ها مورد بررسی قرار گرفت.\n\n"
         message_text += "پروژه‌های پشتیبانی شده:\n"
         
-        # Add each repository with hashtag
+        # Add each repository with its last processed version
         for repo in self.config.repositories:
-            message_text += f"#{repo.name}\n"
+            last_version = self.processed_releases.get(repo.name, 'نامشخص')
+            message_text += f"#{repo.name}: {last_version}\n"
         
         # Create buttons
         channel_url = f"https://t.me/{channel_username}" if channel_username else f"https://t.me/c/{abs(channel_id)}"
@@ -352,6 +353,8 @@ class GitHubReleaseBot:
     async def check_all_repositories(self):
         """Check all repositories for new releases"""
         logger.info("Checking all repositories for new releases")
+        
+        had_new_releases = true
         
         for repo in self.config.repositories:
             logger.info(f"Checking repository: {repo.name}")
@@ -381,12 +384,15 @@ class GitHubReleaseBot:
                     await self.send_release_to_channel(repo, latest_release)
                     self.processed_releases[repo.name] = tag
                     self.save_processed_releases()
+                    had_new_releases = True
                 else:
                     logger.info(f"No new release for {repo.name}, latest is {tag}, stored is {stored_tag}")
                 
             except Exception as e:
                 logger.error(f"Error checking {repo.name}: {e}")
                 continue
+        
+        return had_new_releases
     
     async def get_github_releases(self, github_url: str) -> List[dict]:
         """Get releases from GitHub API"""
@@ -449,11 +455,14 @@ class GitHubReleaseBot:
             logger.info("Bot started successfully")
             
             # Run immediately
-            await self.check_all_repositories()
+            had_new_releases = await self.check_all_repositories()
             logger.info("All repositories checked successfully - Bot execution completed")
             
-            # Send summary message with supported programs
-            await self.send_summary_message()
+            # Send summary message only if there were new releases
+            if had_new_releases:
+                await self.send_summary_message()
+            else:
+                logger.info("No new releases found, skipping summary message")
             
             logger.info("Exiting gracefully...")
             
