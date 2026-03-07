@@ -68,9 +68,9 @@
       "microsoft_store_url": ""
     },
     {
-      "name": "AmTunnel",
-      "github_url": "",
-      "google_play_url": "https://play.google.com/store/apps/details?id=app.vpn.amtunnellite&hl=en",
+      "name": "Happ",
+      "github_url": "https://github.com/Happ-proxy/happ-android",
+      "google_play_url": "",
       "apple_store_url": "",
       "microsoft_store_url": ""
     },
@@ -84,6 +84,13 @@
     {
       "name": "finDns",
       "github_url": "https://github.com/SamNet-dev/findns",
+      "google_play_url": "",
+      "apple_store_url": "",
+      "microsoft_store_url": ""
+    },
+    {
+      "name": "Begzar",
+      "github_url": "https://github.com/Begzar/BegzarApp",
       "google_play_url": "",
       "apple_store_url": "",
       "microsoft_store_url": ""
