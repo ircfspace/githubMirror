@@ -232,7 +232,7 @@ class GitHubReleaseBot:
                 file_hash = file_hashes.get(asset_name, 'N/A')
                 await self.client.send_file(
                     channel_id,
-                    file=temp_file_path,
+                    file=(temp_file_path, asset_name),
                     caption=f"📎 #{repo.name}\n📦 Version: {release.get('tag_name', 'N/A')}\n📎 File: `{asset_name}`\n🔒 SHA256: `{file_hash}`",
                     parse_mode='md'
                 )
