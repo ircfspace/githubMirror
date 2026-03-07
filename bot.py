@@ -312,15 +312,6 @@ class GitHubReleaseBot:
                     self.save_processed_releases()
                 else:
                     logger.info(f"No new release for {repo.name}, latest is {tag}, stored is {stored_tag}")
-                    # Send a status message to indicate no new release
-                    channel_id = self.config.telegram.get('channel_id')
-                    try:
-                        channel_id = int(channel_id)
-                    except (ValueError, TypeError):
-                        logger.error("Invalid channel ID in config")
-                        continue
-                    status_msg = f"📊 No new release for {repo.name}\n📦 Latest: {tag}\n✅ Up to date"
-                    await self.client.send_message(channel_id, status_msg)
                 
             except Exception as e:
                 logger.error(f"Error checking {repo.name}: {e}")
