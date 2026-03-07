@@ -97,10 +97,27 @@ class GitHubReleaseBot:
     def save_processed_releases(self):
         """Save processed releases to file"""
         try:
+            import os
+            current_dir = os.getcwd()
+            logger.info(f"Saving processed releases to {current_dir}/processed_releases.json")
+            logger.info(f"Current processed_releases data: {self.processed_releases}")
+            
             with open('processed_releases.json', 'w') as f:
                 json.dump(self.processed_releases, f, indent=2)
+            
+            logger.info("Successfully saved processed releases")
+            
+            # Verify file was written
+            if os.path.exists('processed_releases.json'):
+                file_size = os.path.getsize('processed_releases.json')
+                logger.info(f"processed_releases.json exists, size: {file_size} bytes")
+            else:
+                logger.error("processed_releases.json was not created!")
+                
         except Exception as e:
             logger.error(f"Error saving processed releases: {e}")
+            import traceback
+            logger.error(f"Traceback: {traceback.format_exc()}")
     
     def get_file_hash(self, content: bytes) -> str:
         """Calculate SHA256 hash of file content"""
