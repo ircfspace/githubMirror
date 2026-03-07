@@ -222,9 +222,17 @@ class GitHubReleaseBot:
                     logger.info(f"Attempting to send file: {temp_file_path} as {asset_name}")
                     logger.info(f"File size: {os.path.getsize(temp_file_path)} bytes")
                     logger.info(f"Starting upload to Telegram...")
+                    
+                    # First upload the file to get a file handle
+                    uploaded_file = await self.client.upload_file(
+                        temp_file_path,
+                        file_name=asset_name
+                    )
+                    
+                    # Then send the file using the handle
                     await self.client.send_file(
                         channel_id,
-                        file=(temp_file_path, asset_name),
+                        file=uploaded_file,
                         caption=f"📎 #{repo.name}\n📦 Version: {release.get('tag_name', 'N/A')}\n📎 File: `{asset_name}`\n🔒 SHA256: `{file_hash}`",
                         parse_mode='md'
                     )
