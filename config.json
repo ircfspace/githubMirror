@@ -68,6 +68,13 @@
       "microsoft_store_url": ""
     },
     {
+      "name": "AmTunnel",
+      "github_url": "",
+      "google_play_url": "https://play.google.com/store/apps/details?id=app.vpn.amtunnellite&hl=en",
+      "apple_store_url": "",
+      "microsoft_store_url": ""
+    },
+    {
       "name": "GNet",
       "github_url": "https://github.com/code3-dev/GNet",
       "google_play_url": "",

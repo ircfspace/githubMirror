@@ -10,6 +10,9 @@ from datetime import datetime
 from typing import Dict, List, Optional
 from packaging.version import Version
 
+from bs4 import BeautifulSoup
+import cloudscraper
+
 from telethon import TelegramClient, events, Button
 from telethon.tl.functions.messages import GetDialogsRequest
 from telethon.tl.types import InputPeerEmpty
@@ -47,11 +50,71 @@ class Repository:
         self.apple_store_url = ""
         self.microsoft_store_url = ""
 
+class APKMirror:
+    def __init__(self, timeout: int = 5, results: int = 5):
+        self.timeout = timeout
+        self.results = results
+        self.user_agent = "Mozilla/5.0 (X11; Linux x86_64; rv:122.0) Gecko/20100101 Firefox/122.0"
+        self.headers = {"User-Agent": self.user_agent}
+        self.base_url = "https://www.apkmirror.com"
+        self.base_search = f"{self.base_url}/?post_type=app_release&searchtype=apk&s="
+        self.scraper = cloudscraper.create_scraper()
+
+    def search(self, query):
+        time.sleep(self.timeout)
+        search_url = self.base_search + query.replace('.', '+')
+        resp = self.scraper.get(search_url, headers=self.headers)
+        soup = BeautifulSoup(resp.text, "html.parser")
+        apps = []
+        appRow = soup.find_all("div", {"class": "appRow"})
+        for app in appRow:
+            try:
+                app_dict = {
+                    "name": app.find("h5", {"class": "appRowTitle"}).text.strip(),
+                    "link": self.base_url + app.find("a", {"class": "downloadLink"})["href"],
+                }
+                apps.append(app_dict)
+            except AttributeError:
+                pass
+        return apps[:self.results]
+
+    def get_latest_version_link(self, app_link):
+        time.sleep(self.timeout)
+        resp = self.scraper.get(app_link, headers=self.headers)
+        soup = BeautifulSoup(resp.text, "html.parser")
+        # The latest version is the first .appRow in the list
+        appRow = soup.find("div", {"class": "appRow"})
+        if appRow:
+            return self.base_url + appRow.find("a", {"class": "downloadLink"})["href"]
+        return None
+
+    def get_app_details(self, app_download_link):
+        time.sleep(self.timeout)
+        resp = self.scraper.get(app_download_link, headers=self.headers)
+        soup = BeautifulSoup(resp.text, "html.parser")
+        data = soup.find_all("div", {"class": ["table-row", "headerFont"]})[1]
+        architecture = data.find_all("div", {"class": ["table-cell", "rowheight", "addseparator", "expand", "pad", "dowrap"]})[1].text.strip()
+        download_link = self.base_url + data.find_all("a", {"class": "accent_color"})[0]["href"]
+        return {"architecture": architecture, "download_link": download_link}
+
+    def get_download_link(self, app_download_link):
+        time.sleep(self.timeout)
+        resp = self.scraper.get(app_download_link, headers=self.headers)
+        soup = BeautifulSoup(resp.text, "html.parser")
+        return self.base_url + str(soup.find_all("a", {"class": "downloadButton"})[0]["href"])
+
+    def get_direct_download_link(self, app_download_url):
+        time.sleep(self.timeout)
+        resp = self.scraper.get(app_download_url, headers=self.headers)
+        soup = BeautifulSoup(resp.text, "html.parser")
+        return soup.find("a", {"rel": "nofollow", "data-google-interstitial": "false"})["href"]
+
 class GitHubReleaseBot:
     def __init__(self):
         self.config = Config()
         self.processed_releases = {}
         self.client = None
+        self.apkmirror = APKMirror()
         self.load_config()
         self.load_processed_releases()
     
@@ -123,6 +186,13 @@ class GitHubReleaseBot:
         """Calculate SHA256 hash of file content"""
         return hashlib.sha256(content).hexdigest()
     
+    def extract_package_name(self, url: str) -> str:
+        """Extract package name from Google Play URL"""
+        from urllib.parse import urlparse, parse_qs
+        parsed = urlparse(url)
+        query = parse_qs(parsed.query)
+        return query.get('id', [''])[0]
+    
     def is_newer_version(self, new_tag: str, old_tag: str) -> bool:
         if not old_tag:
             return True
@@ -170,11 +240,19 @@ class GitHubReleaseBot:
             return
         
         # Send introduction message
-        intro_caption = f"🚀 New Release: #{repo.name}\n\n📦 Version: {release.get('tag_name', 'N/A')}\n📅 Date: {release.get('published_at', 'N/A')}\n\n🔗 Github: {repo.github_url}"
+        if repo.github_url:
+            intro_caption = f"🚀 New Release: #{repo.name}\n\n📦 Version: {release.get('tag_name', 'N/A')}\n📅 Date: {release.get('published_at', 'N/A')}\n\n🔗 Github: {repo.github_url}"
+            button_text = "🔗 Github Mirror"
+        elif repo.google_play_url:
+            intro_caption = f"🚀 New Release: #{repo.name}\n\n📦 Version: {release.get('tag_name', 'N/A')}\n📅 Date: {release.get('published_at', 'N/A')}\n\n🤖 Google Play: {repo.google_play_url}"
+            button_text = "🤖 Google Play Mirror"
+        else:
+            intro_caption = f"🚀 New Release: #{repo.name}\n\n📦 Version: {release.get('tag_name', 'N/A')}\n📅 Date: {release.get('published_at', 'N/A')}"
+            button_text = "🔗 Mirror"
         
         # Create inline keyboard
         channel_url = f"https://t.me/{channel_username}" if channel_username else f"https://t.me/c/{abs(channel_id)}"
-        keyboard = [[Button.url("🔗 Github Mirror", url=channel_url)]]
+        keyboard = [[Button.url(button_text, url=channel_url)]]
         
         await self.client.send_message(
             channel_id,
@@ -258,7 +336,13 @@ class GitHubReleaseBot:
                     
                     # Create inline keyboard for attached files
                     channel_url = f"https://t.me/{channel_username}" if channel_username else f"https://t.me/c/{abs(channel_id)}"
-                    keyboard = [[Button.url("📥 Download from Github", url=download_url)], [Button.url("🔗 Github Mirror", url=channel_url)]]
+                    if repo.github_url:
+                        download_text = "📥 Download from Github"
+                    elif repo.google_play_url:
+                        download_text = "📥 Download from APKMirror"
+                    else:
+                        download_text = "📥 Download"
+                    keyboard = [[Button.url(download_text, url=download_url)], [Button.url(button_text, url=channel_url)]]
                     
                     # Then send the file using the handle
                     logger.info(f"Sending file with send_file method...")
@@ -281,9 +365,9 @@ class GitHubReleaseBot:
                     logger.error(f"Error sending file {asset_name}: {e}", exc_info=True)
                     # Send fallback message with download button
                     size_mb = os.path.getsize(temp_file_path) // (1024 * 1024)
-                    fallback_msg = f"📎 File: `{asset_name}`\n\n📊 Size: {size_mb} MB\n\n⚠️ Download from GitHub:"
+                    fallback_msg = f"📎 File: `{asset_name}`\n\n📊 Size: {size_mb} MB\n\n⚠️ Download from {'GitHub' if repo.github_url else 'APKMirror'}:"
                     
-                    keyboard = [[Button.url("📥 Download from Github", url=download_url)], [Button.url("🔗 Github Mirror", url=download_url)]]
+                    keyboard = [[Button.url(download_text, url=download_url)], [Button.url(button_text, url=download_url)]]
                     
                     await self.client.send_message(
                         channel_id,
@@ -360,21 +444,35 @@ class GitHubReleaseBot:
             logger.info(f"Checking repository: {repo.name}")
             
             try:
-                releases = await self.get_github_releases(repo.github_url)
-                
-                if not releases:
-                    logger.info(f"No releases found for {repo.name}")
-                    continue
-                
-                # Get latest non-draft release
                 latest_release = None
-                for release in releases:
-                    if not release.get('draft', False):
-                        latest_release = release
-                        break
-                
-                if not latest_release:
-                    logger.info(f"No non-draft releases found for {repo.name}")
+                if repo.github_url:
+                    releases = await self.get_github_releases(repo.github_url)
+                    
+                    if not releases:
+                        logger.info(f"No releases found for {repo.name}")
+                        continue
+                    
+                    # Get latest non-draft release
+                    for release in releases:
+                        if not release.get('draft', False):
+                            latest_release = release
+                            break
+                    
+                    if not latest_release:
+                        logger.info(f"No non-draft releases found for {repo.name}")
+                        continue
+                elif repo.google_play_url:
+                    package_name = self.extract_package_name(repo.google_play_url)
+                    if not package_name:
+                        logger.error(f"Could not extract package name from {repo.google_play_url}")
+                        continue
+                    
+                    latest_release = await self.get_apkmirror_release(package_name)
+                    if not latest_release:
+                        logger.info(f"No release found for {repo.name}")
+                        continue
+                else:
+                    logger.info(f"No GitHub or Google Play URL for {repo.name}")
                     continue
                 
                 tag = latest_release.get('tag_name', '')
@@ -431,6 +529,50 @@ class GitHubReleaseBot:
         except Exception as e:
             logger.error(f"Error fetching releases: {e}")
             return []
+    
+    async def get_apkmirror_release(self, package_name: str) -> dict:
+        """Get latest release from APKMirror"""
+        try:
+            # Search for the app
+            apps = self.apkmirror.search(package_name)
+            if not apps:
+                logger.error(f"No apps found for {package_name}")
+                return {}
+            
+            app_link = apps[0]['link']  # Take the first result
+            
+            # Get latest version link
+            version_link = self.apkmirror.get_latest_version_link(app_link)
+            if not version_link:
+                logger.error(f"No version link found for {package_name}")
+                return {}
+            
+            # Extract version from link
+            version = version_link.split('/')[-1].replace('-release', '').replace('-', '.')
+            
+            # Get download link for universal APK
+            details = self.apkmirror.get_app_details(version_link)
+            if details.get('architecture') != 'universal':
+                logger.warning(f"No universal APK found for {package_name}, architecture: {details.get('architecture')}")
+                return {}
+            
+            download_link = self.apkmirror.get_download_link(details['download_link'])
+            direct_link = self.apkmirror.get_direct_download_link(download_link)
+            
+            # Create release dict
+            release = {
+                'tag_name': version,
+                'published_at': datetime.now().isoformat(),
+                'assets': [{
+                    'name': f'{package_name}.apk',
+                    'browser_download_url': direct_link
+                }]
+            }
+            return release
+            
+        except Exception as e:
+            logger.error(f"Error fetching APKMirror release for {package_name}: {e}")
+            return {}
     
     async def run(self):
         """Run the bot"""
