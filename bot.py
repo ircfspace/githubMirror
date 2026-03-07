@@ -234,6 +234,7 @@ class GitHubReleaseBot:
                 # Send file from temp
                 file_hash = file_hashes.get(asset_name, 'N/A')
                 logger.info(f"Attempting to send file: {temp_file_path} as {asset_name}")
+                logger.info(f"File size: {os.path.getsize(temp_file_path)} bytes")
                 await self.client.send_file(
                     channel_id,
                     file=(temp_file_path, asset_name),
@@ -247,6 +248,13 @@ class GitHubReleaseBot:
                 await asyncio.sleep(5)
                 
                 os.unlink(temp_file_path)
+                
+            except Exception as e:
+                logger.error(f"Error sending file {asset_name}: {e}", exc_info=True)
+                # Fallback to sending a link if direct upload fails
+                caption = f"📎 #{repo.name}\n📦 Version: {release.get('tag_name', 'N/A')}\n📎 File: `{asset_name}`\n📊 Size: {human_readable_size}\n⚠️ Download from GitHub: {download_url}\n🔒 SHA256: `{file_hash}`"
+                await self.client.send_message(channel_id, caption, parse_mode='md')
+                logger.info(f"Sent link for {asset_name} due to upload failure.")
                 
             except Exception as e:
                 logger.error(f"Error sending file {asset_name}: {e}")
@@ -305,6 +313,12 @@ class GitHubReleaseBot:
                 else:
                     logger.info(f"No new release for {repo.name}, latest is {tag}, stored is {stored_tag}")
                     # Send a status message to indicate no new release
+                    channel_id = self.config.telegram.get('channel_id')
+                    try:
+                        channel_id = int(channel_id)
+                    except (ValueError, TypeError):
+                        logger.error("Invalid channel ID in config")
+                        continue
                     status_msg = f"📊 No new release for {repo.name}\n📦 Latest: {tag}\n✅ Up to date"
                     await self.client.send_message(channel_id, status_msg)
                 
