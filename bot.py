@@ -203,9 +203,19 @@ class GitHubReleaseBot:
                 import hashlib
                 hash_obj = hashlib.sha256()
                 with tempfile.NamedTemporaryFile(delete=False, dir=os.getcwd()) as temp_file:
+                    total_size = int(response.headers.get('content-length', 0)) if response.headers.get('content-length') else 0
+                    downloaded = 0
+                    last_percent = 0
+                    logger.info(f"Starting download: {asset_name} (Size: {total_size // (1024*1024)} MB)")
                     for chunk in response.iter_content(chunk_size=8192):
                         temp_file.write(chunk)
                         hash_obj.update(chunk)
+                        downloaded += len(chunk)
+                        if total_size > 0:
+                            percent = (downloaded / total_size) * 100
+                            if percent - last_percent >= 5 or percent >= 100:
+                                logger.info(f"Downloading {asset_name}: [{'#' * int(percent // 5)}{' ' * (20 - int(percent // 5))}] {percent:.1f}%")
+                                last_percent = percent
                     temp_file_path = temp_file.name
                 
                 file_hash = hash_obj.hexdigest()
@@ -235,6 +245,7 @@ class GitHubReleaseBot:
                 file_hash = file_hashes.get(asset_name, 'N/A')
                 logger.info(f"Attempting to send file: {temp_file_path} as {asset_name}")
                 logger.info(f"File size: {os.path.getsize(temp_file_path)} bytes")
+                logger.info(f"Starting upload to Telegram...")
                 await self.client.send_file(
                     channel_id,
                     file=(temp_file_path, asset_name),
