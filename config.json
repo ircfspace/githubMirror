@@ -94,6 +94,20 @@
       "google_play_url": "",
       "apple_store_url": "",
       "microsoft_store_url": ""
+    },
+    {
+      "name": "v2rayN",
+      "github_url": "https://github.com/2dust/v2rayN",
+      "google_play_url": "",
+      "apple_store_url": "",
+      "microsoft_store_url": ""
+    },
+    {
+      "name": "v2rayNG",
+      "github_url": "https://github.com/2dust/v2rayNG",
+      "google_play_url": "",
+      "apple_store_url": "",
+      "microsoft_store_url": ""
     }
   ]
 }
