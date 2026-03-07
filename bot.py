@@ -240,7 +240,7 @@ class GitHubReleaseBot:
                     await self.client.send_file(
                         channel_id,
                         file=uploaded_file,
-                        caption=f"📎 #{repo.name}\n📦 Version: {release.get('tag_name', 'N/A')}\n📎 File: `{asset_name}`\n🔒 SHA256: `{file_hash}`",
+                        caption=f"#{repo.name}\n📦 Version: {release.get('tag_name', 'N/A')}\n📎 File: `{asset_name}`\n🔒 SHA256: `{file_hash}`",
                         buttons=keyboard,
                         parse_mode='md'
                     )
