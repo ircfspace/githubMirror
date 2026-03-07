@@ -224,16 +224,23 @@ class GitHubReleaseBot:
                     logger.info(f"Starting upload to Telegram...")
                     
                     # First upload the file to get a file handle
+                    logger.info(f"Uploading file with upload_file method...")
                     uploaded_file = await self.client.upload_file(
                         temp_file_path,
                         file_name=asset_name
                     )
+                    logger.info(f"File uploaded successfully: {uploaded_file}")
+                    
+                    # Create inline keyboard for attached files
+                    keyboard = [[Button.url("📥 Download from Github", url=download_url)], [Button.url("🔗 Github Mirror", url=download_url)]]
                     
                     # Then send the file using the handle
+                    logger.info(f"Sending file with send_file method...")
                     await self.client.send_file(
                         channel_id,
                         file=uploaded_file,
                         caption=f"📎 #{repo.name}\n📦 Version: {release.get('tag_name', 'N/A')}\n📎 File: `{asset_name}`\n🔒 SHA256: `{file_hash}`",
+                        buttons=keyboard,
                         parse_mode='md'
                     )
                     
