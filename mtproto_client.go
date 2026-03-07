@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"fmt"
-	"strconv"
 
 	"github.com/gotd/td/telegram"
 	"github.com/gotd/td/tg"
@@ -15,15 +14,12 @@ type MTProtoClient struct {
 }
 
 func NewMTProtoClient(apiID int, apiHash string) (*MTProtoClient, error) {
-	options := telegram.Options{
+	client := telegram.NewClient(apiID, apiHash, telegram.Options{
 		SessionStorage: &telegram.FileSessionStorage{
 			Path: "mtproto_session.json",
 		},
-		APIID:   apiID,
-		APIHash: apiHash,
-	}
+	})
 
-	client := telegram.NewClient(options)
 	ctx := context.Background()
 
 	return &MTProtoClient{
@@ -42,12 +38,20 @@ func (m *MTProtoClient) Connect() error {
 func (m *MTProtoClient) UploadFileToChannel(channelID int64, fileName string, fileContent []byte, caption string) error {
 	return m.client.Run(m.ctx, func(ctx context.Context) error {
 		// Upload file using MTProto - NO 50MB LIMIT!
-		uploadedFile, err := m.client.Upload().Upload(ctx, &tg.UploadFile{
-			File:     tg.NewInputFileBytes(fileName, fileContent),
-			FileType: &tg.InputDocument{},
-		})
+		upload, err := m.client.Upload().UploadBigFile(ctx, fileName, len(fileContent))
 		if err != nil {
-			return fmt.Errorf("failed to upload file: %w", err)
+			return fmt.Errorf("failed to start upload: %w", err)
+		}
+
+		// Upload file parts
+		_, err = upload.Write(fileContent)
+		if err != nil {
+			return fmt.Errorf("failed to upload file content: %w", err)
+		}
+
+		uploadedFile, err := upload.Result()
+		if err != nil {
+			return fmt.Errorf("failed to get upload result: %w", err)
 		}
 
 		logger.Infof("File uploaded successfully via MTProto: %s (%d bytes)", fileName, len(fileContent))
@@ -58,7 +62,7 @@ func (m *MTProtoClient) UploadFileToChannel(channelID int64, fileName string, fi
 		}
 
 		// Send document to channel
-		_, err = m.client.Messages().SendDocument(ctx, &tg.MessagesSendDocumentRequest{
+		_, err = m.client.API().MessagesSendDocument(ctx, &tg.MessagesSendDocumentRequest{
 			Peer:    peer,
 			Message: caption,
 			File:    uploadedFile,
