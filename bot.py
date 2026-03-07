@@ -341,7 +341,7 @@ class GitHubReleaseBot:
             logger.info("Bot started successfully")
             
             # Run immediately
-            await self.check_all_releases()
+            await self.check_all_repositories()
             logger.info("Initial check completed")
             
         except Exception as e:
