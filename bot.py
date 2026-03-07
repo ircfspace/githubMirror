@@ -202,7 +202,7 @@ class GitHubReleaseBot:
                 import os
                 import hashlib
                 hash_obj = hashlib.sha256()
-                with tempfile.NamedTemporaryFile(delete=False) as temp_file:
+                with tempfile.NamedTemporaryFile(delete=False, dir=os.getcwd()) as temp_file:
                     for chunk in response.iter_content(chunk_size=8192):
                         temp_file.write(chunk)
                         hash_obj.update(chunk)
