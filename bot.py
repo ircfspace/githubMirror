@@ -319,7 +319,8 @@ class GitHubReleaseBot:
             return
         
         # Build message text
-        message_text = "آخرین بروزرسانی برنامه‌ها مورد بررسی قرار گرفت.\n\n"
+        message_text = "#گزارش\n"
+        message_text += "وضعیت آخرین بروزرسانی برنامه‌ها مورد بررسی قرار گرفت.\n\n"
         message_text += "ریپازیتوری‌های پشتیبانی شده:\n"
         
         # Add each repository with hashtag
