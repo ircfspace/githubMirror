@@ -121,7 +121,7 @@ class GitHubReleaseBot:
         caption += f"📅 تاریخ: {release.get('published_at', 'N/A')}\\n\\n"
         
         if repo.github_url:
-            caption += f"🔗 GitHub: {repo.github_url}\\n"
+            caption += f"🔗 Github: {repo.github_url}\\n"
         if repo.google_play_url:
             caption += f"🤖 Google Play: {repo.google_play_url}\\n"
         if repo.apple_store_url:
@@ -153,7 +153,7 @@ class GitHubReleaseBot:
             return
         
         # Send introduction message
-        intro_caption = f"🚀 New Release: #{repo.name}\n\n📦 Version: {release.get('tag_name', 'N/A')}\n📅 Date: {release.get('published_at', 'N/A')}\n\n🔗 GitHub: {repo.github_url}"
+        intro_caption = f"🚀 New Release: #{repo.name}\n\n📦 Version: {release.get('tag_name', 'N/A')}\n📅 Date: {release.get('published_at', 'N/A')}\n\n🔗 Github: {repo.github_url}"
         
         # Create inline keyboard
         channel_url = f"https://t.me/{channel_username}" if channel_username else f"https://t.me/c/{abs(channel_id)}"
@@ -233,6 +233,7 @@ class GitHubReleaseBot:
             try:
                 # Send file from temp
                 file_hash = file_hashes.get(asset_name, 'N/A')
+                logger.info(f"Attempting to send file: {temp_file_path} as {asset_name}")
                 await self.client.send_file(
                     channel_id,
                     file=(temp_file_path, asset_name),
@@ -254,7 +255,7 @@ class GitHubReleaseBot:
                 size_mb = os.path.getsize(temp_file_path) // (1024 * 1024)
                 fallback_msg = f"📎 File: `{asset_name}`\n\n📊 Size: {size_mb} MB\n\n⚠️ Download from GitHub:"
                 
-                keyboard = [[Button.url("📥 Download from GitHub", url=download_url)]]
+                keyboard = [[Button.url("📥 Download from Github", url=download_url)], [Button.url("🔗 Github Mirror", url=download_url)]]
                 
                 await self.client.send_message(
                     channel_id,
@@ -303,6 +304,9 @@ class GitHubReleaseBot:
                     self.save_processed_releases()
                 else:
                     logger.info(f"No new release for {repo.name}, latest is {tag}, stored is {stored_tag}")
+                    # Send a status message to indicate no new release
+                    status_msg = f"📊 No new release for {repo.name}\n📦 Latest: {tag}\n✅ Up to date"
+                    await self.client.send_message(channel_id, status_msg)
                 
             except Exception as e:
                 logger.error(f"Error checking {repo.name}: {e}")
