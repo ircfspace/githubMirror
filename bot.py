@@ -447,7 +447,7 @@ class GitHubReleaseBot:
         channel_url = f"https://t.me/{channel_username}" if channel_username else f"https://t.me/c/{abs(channel_id)}"
         keyboard = [
             [Button.url("🌐 اینترنت آزاد برای همه", "https://t.me/ircfspace")],
-            [Button.url("⚙️ کانفیگ فیلترشکن رایگان", "https://t.me/persianvpnhub")],
+            [Button.url("⚙️ کانفیگ رایگان فیلترشکن", "https://t.me/persianvpnhub")],
             [Button.url("📦 میرور گیت‌هاب", channel_url)]
         ]
         
