@@ -167,6 +167,9 @@ class GitHubReleaseBot:
         
         logger.info("Successfully sent introduction message")
         
+        # Delay to avoid rate limits
+        await asyncio.sleep(5)
+        
         # Process assets
         assets = release.get('assets', [])
         if not assets:
@@ -240,7 +243,7 @@ class GitHubReleaseBot:
                 logger.info(f"Successfully sent file: {asset_name}")
                 
                 # Add delay between uploads
-                await asyncio.sleep(2)
+                await asyncio.sleep(5)
                 
                 os.unlink(temp_file_path)
                 
@@ -260,6 +263,9 @@ class GitHubReleaseBot:
                     parse_mode='md'
                 )
                 os.unlink(temp_file_path)
+                
+                # Delay after fallback
+                await asyncio.sleep(5)
         
         logger.info(f"Successfully sent release {release.get('tag_name', 'unknown')} for {repo.name}")
     
