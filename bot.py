@@ -230,21 +230,6 @@ class GitHubReleaseBot:
             try:
                 # Send file from temp
                 file_hash = file_hashes.get(asset_name, 'N/A')
-                file_size = os.path.getsize(temp_file_path)
-                if file_size > 50 * 1024 * 1024:  # 50 MB limit for bots
-                    logger.info(f"File {asset_name} is {file_size // (1024 * 1024)} MB, using fallback")
-                    # Send fallback
-                    size_mb = file_size // (1024 * 1024)
-                    fallback_msg = f"📎 File: `{asset_name}`\n\n📊 Size: {size_mb} MB\n\n⚠️ Download from GitHub:"
-                    keyboard = [[Button.url("📥 Download from GitHub", url=download_url)]]
-                    await self.client.send_message(
-                        channel_id,
-                        fallback_msg,
-                        buttons=keyboard,
-                        parse_mode='md'
-                    )
-                    os.unlink(temp_file_path)
-                    continue
                 await self.client.send_file(
                     channel_id,
                     file=(temp_file_path, asset_name),
