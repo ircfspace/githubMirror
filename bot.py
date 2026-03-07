@@ -232,7 +232,8 @@ class GitHubReleaseBot:
                     logger.info(f"File uploaded successfully: {uploaded_file}")
                     
                     # Create inline keyboard for attached files
-                    keyboard = [[Button.url("📥 Download from Github", url=download_url)], [Button.url("🔗 Github Mirror", url=download_url)]]
+                    channel_url = f"https://t.me/{channel_username}" if channel_username else f"https://t.me/c/{abs(channel_id)}"
+                    keyboard = [[Button.url("📥 Download from Github", url=download_url)], [Button.url("🔗 Github Mirror", url=channel_url)]]
                     
                     # Then send the file using the handle
                     logger.info(f"Sending file with send_file method...")
