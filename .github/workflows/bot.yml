@@ -9,7 +9,6 @@ on:
 jobs:
   run-bot:
     runs-on: ubuntu-latest
-    timeout-minutes: 30 # Increased timeout to 30 minutes
     permissions:
       contents: write
     
@@ -37,16 +36,13 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
       
-    - name: Run bot with timeout
+    - name: Run bot
       env:
         TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
         TELEGRAM_API_ID: ${{ secrets.TELEGRAM_API_ID }}
         TELEGRAM_API_HASH: ${{ secrets.TELEGRAM_API_HASH }}
       run: |
-        timeout 900s python bot.py || {
-          echo "Bot completed - this is expected behavior"
-          exit 0
-        }
+        python bot.py
       
     - name: Commit processed releases
       if: always()
