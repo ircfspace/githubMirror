@@ -55,7 +55,7 @@ type Asset struct {
 var (
 	config           Config
 	bot             *tgbotapi.BotAPI
-	directUploader  *DirectUploader
+	mtprotoClient   *MTProtoClient
 	processedReleases map[string]string
 	logger          *logrus.Logger
 )
@@ -309,11 +309,11 @@ func sendReleaseToChannel(repo Repository, release GitHubRelease) error {
 				continue
 			}
 			
-			// Use direct uploader for large files (bypasses 50MB limit)
-			if directUploader != nil {
-				err := directUploader.UploadLargeFile(channelID, fileName, content, caption)
+			// Use MTProto client for large files (NO 50MB LIMIT!)
+			if mtprotoClient != nil {
+				err := mtprotoClient.UploadFileToChannel(channelID, fileName, content, caption)
 				if err != nil {
-					logger.Errorf("Direct upload failed for %s, falling back to regular upload: %v", fileName, err)
+					logger.Errorf("MTProto upload failed for %s, falling back to regular upload: %v", fileName, err)
 					
 					// Fallback to regular upload
 					newFileReader := tgbotapi.FileReader{
@@ -511,20 +511,34 @@ func main() {
 
 	logger.Infof("Bot authorized as @%s", bot.Self.UserName)
 
-	// Initialize direct uploader for large file handling (bypasses 50MB limit)
-	botToken := os.Getenv("TELEGRAM_BOT_TOKEN")
-	if botToken != "" {
-		directUploader, err = NewDirectUploader(botToken)
+	// Initialize MTProto client for large file handling (NO 50MB LIMIT!)
+	apiIDStr := os.Getenv("TELEGRAM_API_ID")
+	apiHash := os.Getenv("TELEGRAM_API_HASH")
+	
+	if apiIDStr != "" && apiHash != "" {
+		apiID, err := strconv.Atoi(apiIDStr)
 		if err != nil {
-			logger.Errorf("Failed to initialize direct uploader: %v", err)
-			logger.Infof("Will use regular bot API for all uploads (50MB limit applies)")
-			directUploader = nil
+			logger.Errorf("Invalid API ID: %v", err)
+			mtprotoClient = nil
 		} else {
-			logger.Infof("Direct uploader initialized successfully - will attempt to bypass 50MB limit")
+			mtprotoClient, err = NewMTProtoClient(apiID, apiHash)
+			if err != nil {
+				logger.Errorf("Failed to initialize MTProto client: %v", err)
+				logger.Infof("Will use regular bot API for all uploads (50MB limit applies)")
+				mtprotoClient = nil
+			} else {
+				// Connect to Telegram
+				if connectErr := mtprotoClient.Connect(); connectErr != nil {
+					logger.Errorf("Failed to connect MTProto client: %v", connectErr)
+					mtprotoClient = nil
+				} else {
+					logger.Infof("MTProto client connected successfully - NO 50MB LIMIT!")
+				}
+			}
 		}
 	} else {
-		logger.Errorf("TELEGRAM_BOT_TOKEN not found in environment variables")
-		directUploader = nil
+		logger.Errorf("TELEGRAM_API_ID or TELEGRAM_API_HASH not found in environment variables")
+		mtprotoClient = nil
 	}
 
 	// Setup cron job
@@ -547,10 +561,10 @@ func main() {
 	checkAllRepositories()
 	logger.Info("Initial check completed. Bot will exit.")
 	
-	// Cleanup direct uploader if it was initialized
-	if directUploader != nil {
-		if err := directUploader.Close(); err != nil {
-			logger.Errorf("Error closing direct uploader: %v", err)
+	// Cleanup MTProto client if it was initialized
+	if mtprotoClient != nil {
+		if err := mtprotoClient.Close(); err != nil {
+			logger.Errorf("Error closing MTProto client: %v", err)
 		}
 	}
 	

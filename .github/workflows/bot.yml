@@ -1,4 +1,4 @@
-name: GitHub Release Bot
+name: GitHub Mirror Bot
 
 on:
   schedule:
@@ -40,8 +40,10 @@ jobs:
     - name: Run bot with timeout
       env:
         TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+        TELEGRAM_API_ID: ${{ secrets.TELEGRAM_API_ID }}
+        TELEGRAM_API_HASH: ${{ secrets.TELEGRAM_API_HASH }}
       run: |
-        timeout 900s go run main.go direct_uploader.go || {
+        timeout 900s go run main.go mtproto_client.go || {
           echo "Bot completed - this is expected behavior"
           exit 0
         }
