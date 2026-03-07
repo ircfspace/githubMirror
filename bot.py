@@ -13,6 +13,18 @@ from telethon.tl.functions.messages import GetDialogsRequest
 from telethon.tl.types import InputPeerEmpty
 from telethon.tl.types import InputMediaDocument
 
+# Load environment variables from .env file
+def load_env():
+    env_vars = {}
+    if os.path.exists('.env'):
+        with open('.env', 'r') as f:
+            for line in f:
+                line = line.strip()
+                if line and not line.startswith('#') and '=' in line:
+                    key, value = line.split('=', 1)
+                    env_vars[key.strip()] = value.strip()
+    return env_vars
+
 # Configure logging
 logging.basicConfig(
     level=logging.INFO,
@@ -308,13 +320,17 @@ class GitHubReleaseBot:
     
     async def run(self):
         """Run the bot"""
-        # Get credentials from environment
-        api_id = int(os.getenv('TELEGRAM_API_ID', '0'))
-        api_hash = os.getenv('TELEGRAM_API_HASH', '')
-        bot_token = os.getenv('TELEGRAM_BOT_TOKEN', '')
+        # Load environment variables from .env file first
+        env_vars = load_env()
+        
+        # Get credentials from environment variables or .env file
+        api_id = int(env_vars.get('TELEGRAM_API_ID', os.getenv('TELEGRAM_API_ID', '0')))
+        api_hash = env_vars.get('TELEGRAM_API_HASH', os.getenv('TELEGRAM_API_HASH', ''))
+        bot_token = env_vars.get('TELEGRAM_BOT_TOKEN', os.getenv('TELEGRAM_BOT_TOKEN', ''))
         
         if not all([api_id, api_hash, bot_token]):
             logger.error("Missing required environment variables")
+            logger.info("Please set TELEGRAM_API_ID, TELEGRAM_API_HASH, and TELEGRAM_BOT_TOKEN")
             return
         
         # Create client
@@ -325,7 +341,7 @@ class GitHubReleaseBot:
             logger.info("Bot started successfully")
             
             # Run immediately
-            await self.check_all_repositories()
+            await self.check_all_releases()
             logger.info("Initial check completed")
             
         except Exception as e:
