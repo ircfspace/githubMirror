@@ -153,10 +153,7 @@ class GitHubReleaseBot:
             return
         
         # Send introduction message
-        intro_caption = f"🚀 New Release: {repo.name}\\n\\n"
-        intro_caption += f"📦 Version: {release.get('tag_name', 'N/A')}\\n"
-        intro_caption += f"📅 Date: {release.get('published_at', 'N/A')}\\n\\n"
-        intro_caption += f"🔗 GitHub: {repo.github_url}"
+        intro_caption = f"🚀 New Release: {repo.name}\n\n📦 Version: {release.get('tag_name', 'N/A')}\n📅 Date: {release.get('published_at', 'N/A')}\n\n🔗 GitHub: {repo.github_url}"
         
         # Create inline keyboard
         channel_url = f"https://t.me/{channel_username}" if channel_username else f"https://t.me/c/{abs(channel_id)}"
