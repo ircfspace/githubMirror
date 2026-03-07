@@ -36,3 +36,4 @@ processed_releases.json
 # OS files
 .DS_Store
 Thumbs.db
+github-mirror-bot
