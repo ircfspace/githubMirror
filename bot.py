@@ -5,10 +5,12 @@ import json
 import hashlib
 import asyncio
 import logging
+import time
 from datetime import datetime
 from typing import Dict, List, Optional
+from packaging.version import Version
 
-from telethon import TelegramClient, events
+from telethon import TelegramClient, events, Button
 from telethon.tl.functions.messages import GetDialogsRequest
 from telethon.tl.types import InputPeerEmpty
 from telethon.tl.types import InputMediaDocument
@@ -104,6 +106,14 @@ class GitHubReleaseBot:
         """Calculate SHA256 hash of file content"""
         return hashlib.sha256(content).hexdigest()
     
+    def is_newer_version(self, new_tag: str, old_tag: str) -> bool:
+        if not old_tag:
+            return True
+        try:
+            return Version(new_tag) > Version(old_tag)
+        except:
+            return new_tag != old_tag
+    
     def create_caption(self, repo: Repository, release: dict, file_hashes: Dict[str, str]) -> str:
         """Create caption for release"""
         caption = f"🚀 ریلیز جدید: {repo.name}\\n\\n"
@@ -128,18 +138,6 @@ class GitHubReleaseBot:
     
     async def send_release_to_channel(self, repo: Repository, release: dict):
         """Send release to channel"""
-        release_id = f"{repo.name}#{release.get('tag_name', 'unknown')}"
-        
-        if release_id in self.processed_releases:
-            logger.info(f"Release {release_id} already processed")
-            return
-        
-        logger.info(f"Release {release_id} is new, processing...")
-        
-        # Mark as processed immediately to avoid duplicates
-        self.processed_releases[release_id] = datetime.now().isoformat()
-        self.save_processed_releases()
-        
         # Get channel info
         channel_id = self.config.telegram.get('channel_id')
         channel_username = self.config.telegram.get('channel_username', '').lstrip('@')
@@ -162,7 +160,7 @@ class GitHubReleaseBot:
         
         # Create inline keyboard
         channel_url = f"https://t.me/{channel_username}" if channel_username else f"https://t.me/c/{abs(channel_id)}"
-        keyboard = [[("📎 میرور گیت‌هاب", channel_url)]]
+        keyboard = [[Button.url("Github Mirror", url=channel_url)]]
         
         await self.client.send_message(
             channel_id,
@@ -181,6 +179,7 @@ class GitHubReleaseBot:
         logger.info(f"Found {len(assets)} assets in release")
         
         file_hashes = {}
+        temp_file_paths = {}
         
         # Download and process each asset
         for asset in assets:
@@ -193,15 +192,25 @@ class GitHubReleaseBot:
             
             logger.info(f"Downloading asset: {asset_name}")
             
-            # Download file
+            # Download file to temp
             try:
                 import requests
                 response = requests.get(download_url, stream=True)
                 response.raise_for_status()
                 
-                file_content = response.content
-                file_hash = self.get_file_hash(file_content)
+                import tempfile
+                import os
+                import hashlib
+                hash_obj = hashlib.sha256()
+                with tempfile.NamedTemporaryFile(delete=False) as temp_file:
+                    for chunk in response.iter_content(chunk_size=8192):
+                        temp_file.write(chunk)
+                        hash_obj.update(chunk)
+                    temp_file_path = temp_file.name
+                
+                file_hash = hash_obj.hexdigest()
                 file_hashes[asset_name] = file_hash
+                temp_file_paths[asset_name] = temp_file_path
                 
             except Exception as e:
                 logger.error(f"Error downloading {asset_name}: {e}")
@@ -217,17 +226,15 @@ class GitHubReleaseBot:
             if not download_url:
                 continue
             
+            temp_file_path = temp_file_paths.get(asset_name)
+            if not temp_file_path:
+                continue
+            
             try:
-                # Download file content
-                import requests
-                response = requests.get(download_url, stream=True)
-                response.raise_for_status()
-                file_content = response.content
-                
-                # Send file (NO 50MB LIMIT with Telethon!)
+                # Send file from temp
                 await self.client.send_file(
                     channel_id,
-                    file_content,
+                    file=temp_file_path,
                     caption=f"📎 #{repo.name}\\n📦 Version: {release.get('tag_name', 'N/A')}\\n📎 File: `{asset_name}`",
                     parse_mode='md'
                 )
@@ -237,14 +244,16 @@ class GitHubReleaseBot:
                 # Add delay between uploads
                 await asyncio.sleep(2)
                 
+                os.unlink(temp_file_path)
+                
             except Exception as e:
                 logger.error(f"Error sending file {asset_name}: {e}")
                 
                 # Send fallback message with download button
-                size_mb = len(file_content) // (1024 * 1024)
+                size_mb = os.path.getsize(temp_file_path) // (1024 * 1024)
                 fallback_msg = f"📎 File: `{asset_name}`\\n\\n📊 Size: {size_mb} MB\\n\\n⚠️ Download from GitHub:"
                 
-                keyboard = [[("📥 Download from GitHub", download_url)]]
+                keyboard = [[Button.url("📥 Download from GitHub", url=download_url)]]
                 
                 await self.client.send_message(
                     channel_id,
@@ -252,8 +261,9 @@ class GitHubReleaseBot:
                     buttons=keyboard,
                     parse_mode='md'
                 )
+                os.unlink(temp_file_path)
         
-        logger.info(f"Successfully sent release {release_id} to channel")
+        logger.info(f"Successfully sent release {release.get('tag_name', 'unknown')} for {repo.name}")
     
     async def check_all_repositories(self):
         """Check all repositories for new releases"""
@@ -280,9 +290,15 @@ class GitHubReleaseBot:
                     logger.info(f"No non-draft releases found for {repo.name}")
                     continue
                 
-                logger.info(f"Latest release for {repo.name}: {latest_release.get('tag_name', 'N/A')}")
-                
-                await self.send_release_to_channel(repo, latest_release)
+                tag = latest_release.get('tag_name', '')
+                stored_tag = self.processed_releases.get(repo.name, '')
+                if self.is_newer_version(tag, stored_tag):
+                    logger.info(f"Latest release for {repo.name}: {tag}")
+                    await self.send_release_to_channel(repo, latest_release)
+                    self.processed_releases[repo.name] = tag
+                    self.save_processed_releases()
+                else:
+                    logger.info(f"No new release for {repo.name}, latest is {tag}, stored is {stored_tag}")
                 
             except Exception as e:
                 logger.error(f"Error checking {repo.name}: {e}")
@@ -308,11 +324,19 @@ class GitHubReleaseBot:
                 'Accept': 'application/vnd.github.v3+json'
             }
             
-            response = requests.get(api_url, headers=headers, timeout=30)
-            response.raise_for_status()
+            for attempt in range(3):
+                try:
+                    response = requests.get(api_url, headers=headers, timeout=30)
+                    response.raise_for_status()
+                    releases = response.json()
+                    return releases
+                except requests.exceptions.RequestException as e:
+                    logger.warning(f"Attempt {attempt + 1} failed: {e}")
+                    if attempt < 2:
+                        time.sleep(5)
             
-            releases = response.json()
-            return releases
+            # If all attempts failed
+            raise Exception("Failed to fetch releases after 3 attempts")
             
         except Exception as e:
             logger.error(f"Error fetching releases: {e}")
