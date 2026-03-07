@@ -285,6 +285,52 @@ class GitHubReleaseBot:
         
         logger.info(f"Successfully sent release {release.get('tag_name', 'unknown')} for {repo.name}")
     
+    async def send_summary_message(self):
+        """Send summary message with list of supported programs"""
+        # Get channel info
+        channel_id = self.config.telegram.get('channel_id')
+        channel_username = self.config.telegram.get('channel_username', '').lstrip('@')
+        
+        if not channel_id:
+            logger.error("No channel ID configured for summary message")
+            return
+        
+        try:
+            channel_id = int(channel_id)
+        except ValueError:
+            logger.error("Channel ID must be numeric")
+            return
+        
+        # Build message text
+        message_text = "آخرین بروزرسانی برنامه‌ها مورد بررسی قرار گرفت.\n\n"
+        message_text += "ریپازیتوری‌های پشتیبانی شده:\n"
+        
+        # Add each repository with hashtag
+        for repo in self.config.repositories:
+            message_text += f"#{repo.name}\n"
+        
+        # Create buttons
+        channel_url = f"https://t.me/{channel_username}" if channel_username else f"https://t.me/c/{abs(channel_id)}"
+        keyboard = [
+            [Button.url("🌐 اینترنت آزاد برای همه", "https://t.me/ircfspace")],
+            [Button.url("⚙️ کانفیگ فیلترشکن رایگان", "https://t.me/persianvpnhub")],
+            [Button.url("📦 میرور گیت‌هاب", channel_url)]
+        ]
+        
+        try:
+            await self.client.send_message(
+                channel_id,
+                message_text,
+                buttons=keyboard
+            )
+            logger.info("Summary message sent successfully")
+            
+            # Small delay after summary
+            await asyncio.sleep(3)
+            
+        except Exception as e:
+            logger.error(f"Error sending summary message: {e}")
+    
     async def check_all_repositories(self):
         """Check all repositories for new releases"""
         logger.info("Checking all repositories for new releases")
@@ -387,6 +433,10 @@ class GitHubReleaseBot:
             # Run immediately
             await self.check_all_repositories()
             logger.info("All repositories checked successfully - Bot execution completed")
+            
+            # Send summary message with supported programs
+            await self.send_summary_message()
+            
             logger.info("Exiting gracefully...")
             
         except Exception as e:
