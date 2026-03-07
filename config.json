@@ -108,6 +108,13 @@
       "google_play_url": "",
       "apple_store_url": "",
       "microsoft_store_url": ""
+    },
+    {
+      "name": "MahsaAlert",
+      "github_url": "https://github.com/mahsanet/mahsa-alert-mobile-app",
+      "google_play_url": "",
+      "apple_store_url": "",
+      "microsoft_store_url": ""
     }
   ]
 }
