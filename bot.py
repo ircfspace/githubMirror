@@ -76,6 +76,7 @@ class APKMirror:
                 apps.append(app_dict)
             except AttributeError:
                 pass
+        logger.info(f"APKMirror search for '{query}' found {len(apps)} results")
         return apps[:self.results]
 
     def get_latest_version_link(self, app_link):
@@ -90,12 +91,42 @@ class APKMirror:
 
     def get_app_details(self, app_download_link):
         time.sleep(self.timeout)
-        resp = self.scraper.get(app_download_link, headers=self.headers)
+        try:
+            resp = self.scraper.get(app_download_link, headers=self.headers)
+            resp.raise_for_status()
+        except Exception as e:
+            logger.error(f"Failed to retrieve app details: {e}")
+            return {}
+        
         soup = BeautifulSoup(resp.text, "html.parser")
-        data = soup.find_all("div", {"class": ["table-row", "headerFont"]})[1]
-        architecture = data.find_all("div", {"class": ["table-cell", "rowheight", "addseparator", "expand", "pad", "dowrap"]})[1].text.strip()
-        download_link = self.base_url + data.find_all("a", {"class": "accent_color"})[0]["href"]
-        return {"architecture": architecture, "download_link": download_link}
+        
+        table_rows = soup.find_all("div", {"class": ["table-row", "headerFont"]})
+        if len(table_rows) < 2:
+            logger.error("Failed to find table rows in app details page")
+            return {}
+        
+        data = table_rows[1]
+        
+        cells = data.find_all("div", {"class": ["table-cell", "rowheight", "addseparator", "expand", "pad", "dowrap"]})
+        if len(cells) < 3:
+            logger.error("Failed to find cells in app details table")
+            return {}
+        
+        try:
+            architecture = cells[1].text.strip()
+            android_version = cells[2].text.strip()
+            dpi = cells[3].text.strip()
+            download_link = self.base_url + data.find_all("a", {"class": "accent_color"})[0]["href"]
+        except IndexError:
+            logger.error("Failed to extract app details from cells")
+            return {}
+        
+        return {
+            "architecture": architecture,
+            "android_version": android_version,
+            "dpi": dpi,
+            "download_link": download_link,
+        }
 
     def get_download_link(self, app_download_link):
         time.sleep(self.timeout)
@@ -462,12 +493,7 @@ class GitHubReleaseBot:
                         logger.info(f"No non-draft releases found for {repo.name}")
                         continue
                 elif repo.google_play_url:
-                    package_name = self.extract_package_name(repo.google_play_url)
-                    if not package_name:
-                        logger.error(f"Could not extract package name from {repo.google_play_url}")
-                        continue
-                    
-                    latest_release = await self.get_apkmirror_release(package_name)
+                    latest_release = await self.get_apkmirror_release(repo)
                     if not latest_release:
                         logger.info(f"No release found for {repo.name}")
                         continue
@@ -530,13 +556,22 @@ class GitHubReleaseBot:
             logger.error(f"Error fetching releases: {e}")
             return []
     
-    async def get_apkmirror_release(self, package_name: str) -> dict:
+    async def get_apkmirror_release(self, repo: Repository) -> dict:
         """Get latest release from APKMirror"""
         try:
+            package_name = self.extract_package_name(repo.google_play_url)
+            if not package_name:
+                logger.error(f"Could not extract package name from {repo.google_play_url}")
+                return {}
+            
             # Search for the app
             apps = self.apkmirror.search(package_name)
+            if not apps and repo.name:
+                logger.info(f"No apps found for package {package_name}, trying name {repo.name}")
+                apps = self.apkmirror.search(repo.name)
+            
             if not apps:
-                logger.error(f"No apps found for {package_name}")
+                logger.error(f"No apps found for {package_name} or {repo.name}")
                 return {}
             
             app_link = apps[0]['link']  # Take the first result
@@ -544,7 +579,7 @@ class GitHubReleaseBot:
             # Get latest version link
             version_link = self.apkmirror.get_latest_version_link(app_link)
             if not version_link:
-                logger.error(f"No version link found for {package_name}")
+                logger.error(f"No version link found for {repo.name}")
                 return {}
             
             # Extract version from link
@@ -552,8 +587,13 @@ class GitHubReleaseBot:
             
             # Get download link for universal APK
             details = self.apkmirror.get_app_details(version_link)
+            if not details:
+                logger.error(f"Failed to get app details for {repo.name}")
+                return {}
+            
             if details.get('architecture') != 'universal':
-                logger.warning(f"No universal APK found for {package_name}, architecture: {details.get('architecture')}")
+                logger.warning(f"No universal APK found for {repo.name}, architecture: {details.get('architecture')}")
+                # For now, return empty, but perhaps download anyway
                 return {}
             
             download_link = self.apkmirror.get_download_link(details['download_link'])
@@ -571,7 +611,7 @@ class GitHubReleaseBot:
             return release
             
         except Exception as e:
-            logger.error(f"Error fetching APKMirror release for {package_name}: {e}")
+            logger.error(f"Error fetching APKMirror release for {repo.name}: {e}")
             return {}
     
     async def run(self):
