@@ -37,3 +37,4 @@ processed_releases.json
 .DS_Store
 Thumbs.db
 github-mirror-bot
+bot_session.*
