@@ -178,10 +178,7 @@ class GitHubReleaseBot:
         
         logger.info(f"Found {len(assets)} assets in release")
         
-        file_hashes = {}
-        temp_file_paths = {}
-        
-        # Download and process each asset
+        # Process each asset individually
         for asset in assets:
             asset_name = asset.get('name', 'unknown')
             download_url = asset.get('browser_download_url', '')
@@ -190,7 +187,7 @@ class GitHubReleaseBot:
                 logger.error(f"No download URL for asset: {asset_name}")
                 continue
             
-            logger.info(f"Downloading asset: {asset_name}")
+            logger.info(f"Processing asset: {asset_name}")
             
             # Download file to temp
             try:
@@ -219,73 +216,48 @@ class GitHubReleaseBot:
                     temp_file_path = temp_file.name
                 
                 file_hash = hash_obj.hexdigest()
-                file_hashes[asset_name] = file_hash
-                temp_file_paths[asset_name] = temp_file_path
+                
+                # Send file immediately after download
+                try:
+                    logger.info(f"Attempting to send file: {temp_file_path} as {asset_name}")
+                    logger.info(f"File size: {os.path.getsize(temp_file_path)} bytes")
+                    logger.info(f"Starting upload to Telegram...")
+                    await self.client.send_file(
+                        channel_id,
+                        file=(temp_file_path, asset_name),
+                        caption=f"📎 #{repo.name}\n📦 Version: {release.get('tag_name', 'N/A')}\n📎 File: `{asset_name}`\n🔒 SHA256: `{file_hash}`",
+                        parse_mode='md'
+                    )
+                    
+                    logger.info(f"Successfully sent file: {asset_name}")
+                    
+                    # Add delay between uploads
+                    await asyncio.sleep(5)
+                    
+                    os.unlink(temp_file_path)
+                    
+                except Exception as e:
+                    logger.error(f"Error sending file {asset_name}: {e}", exc_info=True)
+                    # Send fallback message with download button
+                    size_mb = os.path.getsize(temp_file_path) // (1024 * 1024)
+                    fallback_msg = f"📎 File: `{asset_name}`\n\n📊 Size: {size_mb} MB\n\n⚠️ Download from GitHub:"
+                    
+                    keyboard = [[Button.url("📥 Download from Github", url=download_url)], [Button.url("🔗 Github Mirror", url=download_url)]]
+                    
+                    await self.client.send_message(
+                        channel_id,
+                        fallback_msg,
+                        buttons=keyboard,
+                        parse_mode='md'
+                    )
+                    os.unlink(temp_file_path)
+                    
+                    # Delay after fallback
+                    await asyncio.sleep(5)
                 
             except Exception as e:
                 logger.error(f"Error downloading {asset_name}: {e}")
                 continue
-        
-        # Send files
-        caption = self.create_caption(repo, release, file_hashes)
-        
-        for asset in assets:
-            asset_name = asset.get('name', 'unknown')
-            download_url = asset.get('browser_download_url', '')
-            
-            if not download_url:
-                continue
-            
-            temp_file_path = temp_file_paths.get(asset_name)
-            if not temp_file_path:
-                continue
-            
-            try:
-                # Send file from temp
-                file_hash = file_hashes.get(asset_name, 'N/A')
-                logger.info(f"Attempting to send file: {temp_file_path} as {asset_name}")
-                logger.info(f"File size: {os.path.getsize(temp_file_path)} bytes")
-                logger.info(f"Starting upload to Telegram...")
-                await self.client.send_file(
-                    channel_id,
-                    file=(temp_file_path, asset_name),
-                    caption=f"📎 #{repo.name}\n📦 Version: {release.get('tag_name', 'N/A')}\n📎 File: `{asset_name}`\n🔒 SHA256: `{file_hash}`",
-                    parse_mode='md'
-                )
-                
-                logger.info(f"Successfully sent file: {asset_name}")
-                
-                # Add delay between uploads
-                await asyncio.sleep(5)
-                
-                os.unlink(temp_file_path)
-                
-            except Exception as e:
-                logger.error(f"Error sending file {asset_name}: {e}", exc_info=True)
-                # Fallback to sending a link if direct upload fails
-                caption = f"📎 #{repo.name}\n📦 Version: {release.get('tag_name', 'N/A')}\n📎 File: `{asset_name}`\n📊 Size: {human_readable_size}\n⚠️ Download from GitHub: {download_url}\n🔒 SHA256: `{file_hash}`"
-                await self.client.send_message(channel_id, caption, parse_mode='md')
-                logger.info(f"Sent link for {asset_name} due to upload failure.")
-                
-            except Exception as e:
-                logger.error(f"Error sending file {asset_name}: {e}")
-                
-                # Send fallback message with download button
-                size_mb = os.path.getsize(temp_file_path) // (1024 * 1024)
-                fallback_msg = f"📎 File: `{asset_name}`\n\n📊 Size: {size_mb} MB\n\n⚠️ Download from GitHub:"
-                
-                keyboard = [[Button.url("📥 Download from Github", url=download_url)], [Button.url("🔗 Github Mirror", url=download_url)]]
-                
-                await self.client.send_message(
-                    channel_id,
-                    fallback_msg,
-                    buttons=keyboard,
-                    parse_mode='md'
-                )
-                os.unlink(temp_file_path)
-                
-                # Delay after fallback
-                await asyncio.sleep(5)
         
         logger.info(f"Successfully sent release {release.get('tag_name', 'unknown')} for {repo.name}")
     
