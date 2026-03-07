@@ -1,0 +1,338 @@
+#!/usr/bin/env python3
+
+import os
+import json
+import hashlib
+import asyncio
+import logging
+from datetime import datetime
+from typing import Dict, List, Optional
+
+from telethon import TelegramClient, events
+from telethon.tl.functions.messages import GetDialogsRequest
+from telethon.tl.types import InputPeerEmpty
+from telethon.tl.types import InputMediaDocument
+
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
+logger = logging.getLogger(__name__)
+
+class Config:
+    def __init__(self):
+        self.telegram = {}
+        self.repositories = []
+
+class Repository:
+    def __init__(self):
+        self.name = ""
+        self.github_url = ""
+        self.google_play_url = ""
+        self.apple_store_url = ""
+        self.microsoft_store_url = ""
+
+class GitHubReleaseBot:
+    def __init__(self):
+        self.config = Config()
+        self.processed_releases = {}
+        self.client = None
+        self.load_config()
+        self.load_processed_releases()
+    
+    def load_config(self):
+        """Load configuration from config.json"""
+        try:
+            with open('config.json', 'r') as f:
+                data = json.load(f)
+                
+            # Load telegram config
+            self.config.telegram = data.get('telegram', {})
+            
+            # Load repositories
+            self.config.repositories = []
+            for repo_data in data.get('repositories', []):
+                repo = Repository()
+                repo.name = repo_data.get('name', '')
+                repo.github_url = repo_data.get('github_url', '')
+                repo.google_play_url = repo_data.get('google_play_url', '')
+                repo.apple_store_url = repo_data.get('apple_store_url', '')
+                repo.microsoft_store_url = repo_data.get('microsoft_store_url', '')
+                self.config.repositories.append(repo)
+                
+            logger.info("Configuration loaded successfully")
+            
+        except Exception as e:
+            logger.error(f"Error loading config: {e}")
+            raise
+    
+    def load_processed_releases(self):
+        """Load processed releases from file"""
+        try:
+            if os.path.exists('processed_releases.json'):
+                with open('processed_releases.json', 'r') as f:
+                    self.processed_releases = json.load(f)
+            else:
+                self.processed_releases = {}
+                logger.info("No existing processed releases file found, starting fresh")
+        except Exception as e:
+            logger.error(f"Error loading processed releases: {e}")
+            self.processed_releases = {}
+    
+    def save_processed_releases(self):
+        """Save processed releases to file"""
+        try:
+            with open('processed_releases.json', 'w') as f:
+                json.dump(self.processed_releases, f, indent=2)
+        except Exception as e:
+            logger.error(f"Error saving processed releases: {e}")
+    
+    def get_file_hash(self, content: bytes) -> str:
+        """Calculate SHA256 hash of file content"""
+        return hashlib.sha256(content).hexdigest()
+    
+    def create_caption(self, repo: Repository, release: dict, file_hashes: Dict[str, str]) -> str:
+        """Create caption for release"""
+        caption = f"🚀 ریلیز جدید: {repo.name}\\n\\n"
+        caption += f"📦 نسخه: {release.get('tag_name', 'N/A')}\\n"
+        caption += f"📅 تاریخ: {release.get('published_at', 'N/A')}\\n\\n"
+        
+        if repo.github_url:
+            caption += f"🔗 GitHub: {repo.github_url}\\n"
+        if repo.google_play_url:
+            caption += f"🤖 Google Play: {repo.google_play_url}\\n"
+        if repo.apple_store_url:
+            caption += f"💰 App Store: {repo.apple_store_url}\\n"
+        if repo.microsoft_store_url:
+            caption += f"🪟 Microsoft Store: {repo.microsoft_store_url}\\n"
+        
+        if file_hashes:
+            caption += "\\n🔒 هش‌های SHA256:\\n"
+            for filename, hash_value in sorted(file_hashes.items()):
+                caption += f"📎 {filename}:\\n`{hash_value}`\\n"
+        
+        return caption
+    
+    async def send_release_to_channel(self, repo: Repository, release: dict):
+        """Send release to channel"""
+        release_id = f"{repo.name}#{release.get('tag_name', 'unknown')}"
+        
+        if release_id in self.processed_releases:
+            logger.info(f"Release {release_id} already processed")
+            return
+        
+        logger.info(f"Release {release_id} is new, processing...")
+        
+        # Mark as processed immediately to avoid duplicates
+        self.processed_releases[release_id] = datetime.now().isoformat()
+        self.save_processed_releases()
+        
+        # Get channel info
+        channel_id = self.config.telegram.get('channel_id')
+        channel_username = self.config.telegram.get('channel_username', '').lstrip('@')
+        
+        if not channel_id:
+            logger.error("No channel ID configured")
+            return
+        
+        try:
+            channel_id = int(channel_id)
+        except ValueError:
+            logger.error("Channel ID must be numeric")
+            return
+        
+        # Send introduction message
+        intro_caption = f"🚀 New Release: {repo.name}\\n\\n"
+        intro_caption += f"📦 Version: {release.get('tag_name', 'N/A')}\\n"
+        intro_caption += f"📅 Date: {release.get('published_at', 'N/A')}\\n\\n"
+        intro_caption += f"🔗 GitHub: {repo.github_url}"
+        
+        # Create inline keyboard
+        channel_url = f"https://t.me/{channel_username}" if channel_username else f"https://t.me/c/{abs(channel_id)}"
+        keyboard = [[("📎 میرور گیت‌هاب", channel_url)]]
+        
+        await self.client.send_message(
+            channel_id,
+            intro_caption,
+            buttons=keyboard
+        )
+        
+        logger.info("Successfully sent introduction message")
+        
+        # Process assets
+        assets = release.get('assets', [])
+        if not assets:
+            logger.info("No assets found in release")
+            return
+        
+        logger.info(f"Found {len(assets)} assets in release")
+        
+        file_hashes = {}
+        
+        # Download and process each asset
+        for asset in assets:
+            asset_name = asset.get('name', 'unknown')
+            download_url = asset.get('browser_download_url', '')
+            
+            if not download_url:
+                logger.error(f"No download URL for asset: {asset_name}")
+                continue
+            
+            logger.info(f"Downloading asset: {asset_name}")
+            
+            # Download file
+            try:
+                import requests
+                response = requests.get(download_url, stream=True)
+                response.raise_for_status()
+                
+                file_content = response.content
+                file_hash = self.get_file_hash(file_content)
+                file_hashes[asset_name] = file_hash
+                
+            except Exception as e:
+                logger.error(f"Error downloading {asset_name}: {e}")
+                continue
+        
+        # Send files
+        caption = self.create_caption(repo, release, file_hashes)
+        
+        for asset in assets:
+            asset_name = asset.get('name', 'unknown')
+            download_url = asset.get('browser_download_url', '')
+            
+            if not download_url:
+                continue
+            
+            try:
+                # Download file content
+                import requests
+                response = requests.get(download_url, stream=True)
+                response.raise_for_status()
+                file_content = response.content
+                
+                # Send file (NO 50MB LIMIT with Telethon!)
+                await self.client.send_file(
+                    channel_id,
+                    file_content,
+                    caption=f"📎 #{repo.name}\\n📦 Version: {release.get('tag_name', 'N/A')}\\n📎 File: `{asset_name}`",
+                    parse_mode='md'
+                )
+                
+                logger.info(f"Successfully sent file: {asset_name}")
+                
+                # Add delay between uploads
+                await asyncio.sleep(2)
+                
+            except Exception as e:
+                logger.error(f"Error sending file {asset_name}: {e}")
+                
+                # Send fallback message with download button
+                size_mb = len(file_content) // (1024 * 1024)
+                fallback_msg = f"📎 File: `{asset_name}`\\n\\n📊 Size: {size_mb} MB\\n\\n⚠️ Download from GitHub:"
+                
+                keyboard = [[("📥 Download from GitHub", download_url)]]
+                
+                await self.client.send_message(
+                    channel_id,
+                    fallback_msg,
+                    buttons=keyboard,
+                    parse_mode='md'
+                )
+        
+        logger.info(f"Successfully sent release {release_id} to channel")
+    
+    async def check_all_repositories(self):
+        """Check all repositories for new releases"""
+        logger.info("Checking all repositories for new releases")
+        
+        for repo in self.config.repositories:
+            logger.info(f"Checking repository: {repo.name}")
+            
+            try:
+                releases = await self.get_github_releases(repo.github_url)
+                
+                if not releases:
+                    logger.info(f"No releases found for {repo.name}")
+                    continue
+                
+                # Get latest non-draft release
+                latest_release = None
+                for release in releases:
+                    if not release.get('draft', False):
+                        latest_release = release
+                        break
+                
+                if not latest_release:
+                    logger.info(f"No non-draft releases found for {repo.name}")
+                    continue
+                
+                logger.info(f"Latest release for {repo.name}: {latest_release.get('tag_name', 'N/A')}")
+                
+                await self.send_release_to_channel(repo, latest_release)
+                
+            except Exception as e:
+                logger.error(f"Error checking {repo.name}: {e}")
+                continue
+    
+    async def get_github_releases(self, github_url: str) -> List[dict]:
+        """Get releases from GitHub API"""
+        try:
+            import requests
+            
+            # Extract owner and repo from URL
+            parts = github_url.strip('/').split('/')
+            if len(parts) < 5:
+                raise ValueError(f"Invalid GitHub URL: {github_url}")
+            
+            owner = parts[3]
+            repo_name = parts[4]
+            
+            api_url = f"https://api.github.com/repos/{owner}/{repo_name}/releases"
+            
+            headers = {
+                'User-Agent': 'GitHub-Release-Bot/1.0',
+                'Accept': 'application/vnd.github.v3+json'
+            }
+            
+            response = requests.get(api_url, headers=headers, timeout=30)
+            response.raise_for_status()
+            
+            releases = response.json()
+            return releases
+            
+        except Exception as e:
+            logger.error(f"Error fetching releases: {e}")
+            return []
+    
+    async def run(self):
+        """Run the bot"""
+        # Get credentials from environment
+        api_id = int(os.getenv('TELEGRAM_API_ID', '0'))
+        api_hash = os.getenv('TELEGRAM_API_HASH', '')
+        bot_token = os.getenv('TELEGRAM_BOT_TOKEN', '')
+        
+        if not all([api_id, api_hash, bot_token]):
+            logger.error("Missing required environment variables")
+            return
+        
+        # Create client
+        self.client = TelegramClient('bot_session', api_id, api_hash)
+        
+        try:
+            await self.client.start(bot_token=bot_token)
+            logger.info("Bot started successfully")
+            
+            # Run immediately
+            await self.check_all_repositories()
+            logger.info("Initial check completed")
+            
+        except Exception as e:
+            logger.error(f"Error running bot: {e}")
+        finally:
+            await self.client.disconnect()
+
+if __name__ == "__main__":
+    bot = GitHubReleaseBot()
+    asyncio.run(bot.run())

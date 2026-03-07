@@ -19,23 +19,23 @@ jobs:
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
       
-    - name: Setup Go
-      uses: actions/setup-go@v4
+    - name: Setup Python
+      uses: actions/setup-python@v4
       with:
-        go-version: '1.21'
+        python-version: '3.9'
         
-    - name: Cache Go modules
+    - name: Cache pip packages
       uses: actions/cache@v3
       with:
-        path: ~/go/pkg/mod
-        key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
         restore-keys: |
-          ${{ runner.os }}-go-
+          ${{ runner.os }}-pip-
           
     - name: Install dependencies
       run: |
-        go mod download
-        go mod tidy
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
       
     - name: Run bot with timeout
       env:
@@ -43,7 +43,7 @@ jobs:
         TELEGRAM_API_ID: ${{ secrets.TELEGRAM_API_ID }}
         TELEGRAM_API_HASH: ${{ secrets.TELEGRAM_API_HASH }}
       run: |
-        timeout 900s go run main.go mtproto_client.go || {
+        timeout 900s python bot.py || {
           echo "Bot completed - this is expected behavior"
           exit 0
         }
@@ -54,7 +54,7 @@ jobs:
         git config --local user.email "github-actions[bot]@users.noreply.github.com"
         git config --local user.name "github-actions[bot]"
         git add processed_releases.json
-        git commit -m "Update processed releases" || echo "No changes to commit"
+        git diff --staged --quiet || git commit -m "Update processed releases"
         git push || echo "Nothing to push"
       
     - name: Upload processed releases

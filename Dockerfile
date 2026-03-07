@@ -1,32 +1,28 @@
 # Build stage
-FROM golang:1.21-alpine AS builder
+FROM python:3.9-alpine AS builder
 
 WORKDIR /app
 
-# Copy go mod files
-COPY go.mod go.sum ./
+# Copy requirements file
+COPY requirements.txt .
 
-# Download dependencies
-RUN go mod download
-
-# Copy source code
-COPY . .
-
-# Build the binary
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o bot main.go
+# Install dependencies
+RUN pip install --no-cache-dir -r requirements.txt
 
 # Final stage
-FROM alpine:latest
+FROM python:3.9-alpine
 
 RUN apk --no-cache add ca-certificates tzdata
 
-WORKDIR /root/
+WORKDIR /app
 
-# Copy the binary from builder stage
-COPY --from=builder /app/bot .
+# Copy requirements and install
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy config file
+# Copy source code
+COPY bot.py .
 COPY config.json .
 
 # Command to run
-CMD ["./bot"]
+CMD ["python", "bot.py"]
