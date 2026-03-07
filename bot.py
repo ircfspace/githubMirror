@@ -354,7 +354,7 @@ class GitHubReleaseBot:
         """Check all repositories for new releases"""
         logger.info("Checking all repositories for new releases")
         
-        had_new_releases = true
+        had_new_releases = True
         
         for repo in self.config.repositories:
             logger.info(f"Checking repository: {repo.name}")
