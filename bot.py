@@ -249,7 +249,7 @@ class GitHubReleaseBot:
                 
                 # Send fallback message with download button
                 size_mb = os.path.getsize(temp_file_path) // (1024 * 1024)
-                fallback_msg = f"📎 File: `{asset_name}`\\n\\n📊 Size: {size_mb} MB\\n\\n⚠️ Download from GitHub:"
+                fallback_msg = f"📎 File: `{asset_name}`\n\n📊 Size: {size_mb} MB\n\n⚠️ Download from GitHub:"
                 
                 keyboard = [[Button.url("📥 Download from GitHub", url=download_url)]]
                 
