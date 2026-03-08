@@ -115,6 +115,13 @@
       "google_play_url": "",
       "apple_store_url": "",
       "microsoft_store_url": ""
+    },
+    {
+      "name": "Amnezia",
+      "github_url": "https://github.com/amnezia-vpn/amnezia-client",
+      "google_play_url": "",
+      "apple_store_url": "",
+      "microsoft_store_url": ""
     }
   ]
 }
