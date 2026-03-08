@@ -136,6 +136,13 @@
       "google_play_url": "",
       "apple_store_url": "",
       "microsoft_store_url": ""
+    },
+    {
+      "name": "NoizDNS",
+      "github_url": "https://github.com/anonvector/noizdns-deploy",
+      "google_play_url": "",
+      "apple_store_url": "",
+      "microsoft_store_url": ""
     }
   ]
 }
