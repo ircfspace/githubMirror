@@ -122,6 +122,20 @@
       "google_play_url": "",
       "apple_store_url": "",
       "microsoft_store_url": ""
+    },
+    {
+      "name": "SlipstreamPlus",
+      "github_url": "https://github.com/payeh/Slipstreamplus",
+      "google_play_url": "",
+      "apple_store_url": "",
+      "microsoft_store_url": ""
+    },
+    {
+      "name": "DnsTtXyz",
+      "github_url": "https://github.com/dnstt-xyz/dnstt_xyz_app",
+      "google_play_url": "",
+      "apple_store_url": "",
+      "microsoft_store_url": ""
     }
   ]
 }
