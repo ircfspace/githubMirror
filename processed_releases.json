@@ -9,7 +9,7 @@
   "IRBox": "v1.0.2",
   "Zemzeme": "release/v1.0.2",
   "GNet": "v1.0.4",
-  "finDns": "v0.1.6",
+  "finDns": "v0.1.7",
   "Begzar": "v6.0.0",
   "Happ": "3.14.0",
   "v2rayN": "7.19.2",
@@ -18,5 +18,6 @@
   "Amnezia": "4.8.14.1",
   "SlipstreamPlus": "v1.1.20",
   "DnsTtXyz": "v2.2.0",
-  "NoizDNS": "v1.4.0"
+  "NoizDNS": "v1.4.0",
+  "DnsTunEzpz": "v0.2.0"
 }
