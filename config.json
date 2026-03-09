@@ -143,6 +143,13 @@
       "google_play_url": "",
       "apple_store_url": "",
       "microsoft_store_url": ""
+    },
+    {
+      "name": "DnsTunEzpz",
+      "github_url": "https://github.com/aleskxyz/dnstun-ezpz",
+      "google_play_url": "",
+      "apple_store_url": "",
+      "microsoft_store_url": ""
     }
   ]
 }

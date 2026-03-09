@@ -285,16 +285,57 @@ class GitHubReleaseBot:
         channel_url = f"https://t.me/{channel_username}" if channel_username else f"https://t.me/c/{abs(channel_id)}"
         keyboard = [[Button.url(button_text, url=channel_url)]]
         
-        await self.client.send_message(
-            channel_id,
-            intro_caption,
-            buttons=keyboard
-        )
+        # Fetch README.md if this is a GitHub repository
+        readme_file_path = None
+        if repo.github_url:
+            readme_content = await self.get_github_readme(repo.github_url)
+            if readme_content:
+                try:
+                    # Create README.md file with proper name
+                    import tempfile
+                    import os
+                    temp_dir = tempfile.gettempdir()
+                    readme_file_path = os.path.join(temp_dir, 'README.md')
+                    
+                    with open(readme_file_path, 'w', encoding='utf-8') as readme_file:
+                        readme_file.write(readme_content)
+                    
+                    logger.info(f"Successfully fetched README.md for {repo.name}")
+                except Exception as e:
+                    logger.error(f"Error creating README.md file for {repo.name}: {e}")
+                    readme_file_path = None
+            else:
+                logger.info(f"No README.md found for {repo.name}")
         
-        logger.info("Successfully sent introduction message")
-        
-        # Delay to avoid rate limits
-        await asyncio.sleep(5)
+        # Send introduction message with README.md attached if available
+        if readme_file_path:
+            # Send message with README.md as attached document (caption on top)
+            await self.client.send_file(
+                channel_id,
+                file=readme_file_path,
+                caption=intro_caption,
+                buttons=keyboard,
+                parse_mode='md',
+                force_document=False  # This allows caption to be on top
+            )
+            logger.info("Successfully sent introduction message with README.md attached")
+            
+            # Clean up temp file
+            os.unlink(readme_file_path)
+            
+            # Delay after sending message with attachment
+            await asyncio.sleep(5)
+        else:
+            # Send regular text message without README
+            await self.client.send_message(
+                channel_id,
+                intro_caption,
+                buttons=keyboard
+            )
+            logger.info("Successfully sent introduction message")
+            
+            # Delay to avoid rate limits
+            await asyncio.sleep(5)
         
         # Process assets
         assets = release.get('assets', [])
@@ -555,6 +596,56 @@ class GitHubReleaseBot:
         except Exception as e:
             logger.error(f"Error fetching releases: {e}")
             return []
+    
+    async def get_github_readme(self, github_url: str) -> Optional[str]:
+        """Fetch README.md content from GitHub repository"""
+        try:
+            import requests
+            
+            # Extract owner and repo from URL
+            parts = github_url.strip('/').split('/')
+            if len(parts) < 5:
+                logger.error(f"Invalid GitHub URL: {github_url}")
+                return None
+            
+            owner = parts[3]
+            repo_name = parts[4]
+            
+            # Try different README filenames
+            readme_names = ['README.md', 'readme.md', 'README.markdown', 'README']
+            
+            headers = {
+                'User-Agent': 'GitHub-Release-Bot/1.0',
+                'Accept': 'application/vnd.github.v3+json'
+            }
+            
+            for readme_name in readme_names:
+                api_url = f"https://api.github.com/repos/{owner}/{repo_name}/contents/{readme_name}"
+                
+                try:
+                    response = requests.get(api_url, headers=headers, timeout=30)
+                    if response.status_code == 200:
+                        data = response.json()
+                        if data.get('content') and data.get('encoding') == 'base64':
+                            import base64
+                            content = base64.b64decode(data['content']).decode('utf-8')
+                            logger.info(f"Successfully fetched {readme_name} from {owner}/{repo_name}")
+                            return content
+                    elif response.status_code == 404:
+                        continue  # Try next README name
+                    else:
+                        response.raise_for_status()
+                        
+                except requests.exceptions.RequestException as e:
+                    logger.warning(f"Failed to fetch {readme_name}: {e}")
+                    continue
+            
+            logger.info(f"No README file found in {owner}/{repo_name}")
+            return None
+            
+        except Exception as e:
+            logger.error(f"Error fetching README: {e}")
+            return None
     
     async def get_apkmirror_release(self, repo: Repository) -> dict:
         """Get latest release from APKMirror"""
