@@ -164,6 +164,13 @@
       "google_play_url": "",
       "apple_store_url": "",
       "microsoft_store_url": ""
+    },
+    {
+      "name": "zedSecure",
+      "github_url": "https://github.com/CluvexStudio/ZedSecure",
+      "google_play_url": "",
+      "apple_store_url": "",
+      "microsoft_store_url": ""
     }
   ]
 }
