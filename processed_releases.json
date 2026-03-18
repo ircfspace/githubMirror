@@ -1,5 +1,5 @@
 {
-  "lastReportMessageId": 765,
+  "lastReportMessageId": 786,
   "Oblivion": "v7",
   "OblivionDesktop": "v3.11.0",
   "DefyxVPN": "v5.1.0",
@@ -21,5 +21,7 @@
   "DnsTtXyz": "v2.2.0",
   "NoizDNS": "v1.4.0",
   "DnsTunEzpz": "v0.3.1",
-  "SlipStreamGUI": "v1.4.4"
+  "SlipStreamGUI": "v1.4.4",
+  "xrayKnife": "v9.10.15",
+  "zedSecure": "v1.8.1"
 }
