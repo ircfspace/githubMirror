@@ -146,6 +146,7 @@ class GitHubReleaseBot:
         self.processed_releases = {}
         self.client = None
         self.apkmirror = APKMirror()
+        self.last_report_message_id = None
         self.load_config()
         self.load_processed_releases()
     
@@ -181,12 +182,18 @@ class GitHubReleaseBot:
             if os.path.exists('processed_releases.json'):
                 with open('processed_releases.json', 'r') as f:
                     self.processed_releases = json.load(f)
+                # Load last report message ID
+                self.last_report_message_id = self.processed_releases.get('lastReportMessageId', None)
+                if self.last_report_message_id:
+                    logger.info(f"Loaded last report message ID: {self.last_report_message_id}")
             else:
                 self.processed_releases = {}
+                self.last_report_message_id = None
                 logger.info("No existing processed releases file found, starting fresh")
         except Exception as e:
             logger.error(f"Error loading processed releases: {e}")
             self.processed_releases = {}
+            self.last_report_message_id = None
     
     def save_processed_releases(self):
         """Save processed releases to file"""
@@ -194,6 +201,12 @@ class GitHubReleaseBot:
             import os
             current_dir = os.getcwd()
             logger.info(f"Saving processed releases to {current_dir}/processed_releases.json")
+            
+            # Save last report message ID
+            if self.last_report_message_id:
+                self.processed_releases['lastReportMessageId'] = self.last_report_message_id
+                logger.info(f"Saving last report message ID: {self.last_report_message_id}")
+            
             logger.info(f"Current processed_releases data: {self.processed_releases}")
             
             with open('processed_releases.json', 'w') as f:
@@ -459,7 +472,7 @@ class GitHubReleaseBot:
         logger.info(f"Successfully sent release {release.get('tag_name', 'unknown')} for {repo.name}")
     
     async def delete_previous_reports(self):
-        """Delete all previous messages with #گزارش hashtag"""
+        """Delete the last report message"""
         channel_id = self.config.telegram.get('channel_id')
         
         if not channel_id:
@@ -473,37 +486,16 @@ class GitHubReleaseBot:
             return
         
         try:
-            logger.info("Searching for previous report messages with #گزارش hashtag...")
-            
-            # Search for messages with #گزارش hashtag by iterating through recent messages
-            messages_to_delete = []
-            # Get last 1000 messages to search for #گزارش hashtag
-            async for message in self.client.iter_messages(channel_id, limit=1000):
-                if message and message.text and '#گزارش' in message.text:
-                    messages_to_delete.append(message.id)
-                    logger.info(f"Found report message ID: {message.id}")
-            
-            if not messages_to_delete:
-                logger.info("No previous report messages found with #گزارش hashtag")
-                return
-            
-            logger.info(f"Found {len(messages_to_delete)} report messages to delete")
-            
-            # Delete messages (Telegram API allows max 100 messages per request)
-            batch_size = 100
-            for i in range(0, len(messages_to_delete), batch_size):
-                batch = messages_to_delete[i:i + batch_size]
-                try:
-                    await self.client.delete_messages(channel_id, batch)
-                    logger.info(f"Deleted batch of {len(batch)} report messages")
-                    await asyncio.sleep(1)  # Small delay to avoid rate limits
-                except Exception as e:
-                    logger.error(f"Error deleting batch of messages: {e}")
-            
-            logger.info("Successfully deleted all previous report messages")
+            if self.last_report_message_id:
+                logger.info(f"Deleting previous report message ID: {self.last_report_message_id}")
+                await self.client.delete_messages(channel_id, [self.last_report_message_id])
+                logger.info("Successfully deleted previous report message")
+                self.last_report_message_id = None
+            else:
+                logger.info("No previous report message ID found, skipping deletion")
             
         except Exception as e:
-            logger.error(f"Error deleting previous reports: {e}")
+            logger.error(f"Error deleting previous report: {e}")
     
     async def send_summary_message(self):
         """Send summary message with list of supported programs"""
@@ -540,12 +532,19 @@ class GitHubReleaseBot:
         ]
         
         try:
-            await self.client.send_message(
+            sent_message = await self.client.send_message(
                 channel_id,
                 message_text,
                 buttons=keyboard
             )
             logger.info("Summary message sent successfully")
+            
+            # Save the message ID for future deletion
+            if sent_message and hasattr(sent_message, 'id'):
+                self.last_report_message_id = sent_message.id
+                logger.info(f"Saved report message ID: {self.last_report_message_id}")
+                # Save to file immediately
+                self.save_processed_releases()
             
             # Small delay after summary
             await asyncio.sleep(3)
