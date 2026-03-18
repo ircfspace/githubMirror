@@ -150,6 +150,13 @@
       "google_play_url": "",
       "apple_store_url": "",
       "microsoft_store_url": ""
+    },
+    {
+      "name": "SlipStreamGUI",
+      "github_url": "https://github.com/mirzaaghazadeh/SlipStreamGUI",
+      "google_play_url": "",
+      "apple_store_url": "",
+      "microsoft_store_url": ""
     }
   ]
 }
