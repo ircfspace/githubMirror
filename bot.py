@@ -17,8 +17,6 @@ from telethon import TelegramClient, events, Button
 from telethon.tl.functions.messages import GetDialogsRequest
 from telethon.tl.types import InputPeerEmpty
 from telethon.tl.types import InputMediaDocument
-from telethon.tl.functions.messages import SearchGlobalRequest
-from telethon.tl.functions.channels import DeleteMessagesRequest
 
 # Load environment variables from .env file
 def load_env():
@@ -477,10 +475,11 @@ class GitHubReleaseBot:
         try:
             logger.info("Searching for previous report messages with #گزارش hashtag...")
             
-            # Search for messages with #گزارش hashtag
+            # Search for messages with #گزارش hashtag by iterating through recent messages
             messages_to_delete = []
-            async for message in self.client.iter_messages(channel_id, search='#گزارش'):
-                if message and hasattr(message, 'id'):
+            # Get last 1000 messages to search for #گزارش hashtag
+            async for message in self.client.iter_messages(channel_id, limit=1000):
+                if message and message.text and '#گزارش' in message.text:
                     messages_to_delete.append(message.id)
                     logger.info(f"Found report message ID: {message.id}")
             
@@ -781,7 +780,7 @@ class GitHubReleaseBot:
             
             # Send summary message only if there were new releases
             if had_new_releases:
-                # Delete previous report messages before sending new one
+                # Delete all previous report messages before sending new one
                 await self.delete_previous_reports()
                 await self.send_summary_message()
             else:
