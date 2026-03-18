@@ -17,6 +17,8 @@ from telethon import TelegramClient, events, Button
 from telethon.tl.functions.messages import GetDialogsRequest
 from telethon.tl.types import InputPeerEmpty
 from telethon.tl.types import InputMediaDocument
+from telethon.tl.functions.messages import SearchGlobalRequest
+from telethon.tl.functions.channels import DeleteMessagesRequest
 
 # Load environment variables from .env file
 def load_env():
@@ -458,6 +460,52 @@ class GitHubReleaseBot:
         
         logger.info(f"Successfully sent release {release.get('tag_name', 'unknown')} for {repo.name}")
     
+    async def delete_previous_reports(self):
+        """Delete all previous messages with #گزارش hashtag"""
+        channel_id = self.config.telegram.get('channel_id')
+        
+        if not channel_id:
+            logger.error("No channel ID configured for deleting reports")
+            return
+        
+        try:
+            channel_id = int(channel_id)
+        except ValueError:
+            logger.error("Channel ID must be numeric")
+            return
+        
+        try:
+            logger.info("Searching for previous report messages with #گزارش hashtag...")
+            
+            # Search for messages with #گزارش hashtag
+            messages_to_delete = []
+            async for message in self.client.iter_messages(channel_id, search='#گزارش'):
+                if message and hasattr(message, 'id'):
+                    messages_to_delete.append(message.id)
+                    logger.info(f"Found report message ID: {message.id}")
+            
+            if not messages_to_delete:
+                logger.info("No previous report messages found with #گزارش hashtag")
+                return
+            
+            logger.info(f"Found {len(messages_to_delete)} report messages to delete")
+            
+            # Delete messages (Telegram API allows max 100 messages per request)
+            batch_size = 100
+            for i in range(0, len(messages_to_delete), batch_size):
+                batch = messages_to_delete[i:i + batch_size]
+                try:
+                    await self.client.delete_messages(channel_id, batch)
+                    logger.info(f"Deleted batch of {len(batch)} report messages")
+                    await asyncio.sleep(1)  # Small delay to avoid rate limits
+                except Exception as e:
+                    logger.error(f"Error deleting batch of messages: {e}")
+            
+            logger.info("Successfully deleted all previous report messages")
+            
+        except Exception as e:
+            logger.error(f"Error deleting previous reports: {e}")
+    
     async def send_summary_message(self):
         """Send summary message with list of supported programs"""
         # Get channel info
@@ -733,6 +781,8 @@ class GitHubReleaseBot:
             
             # Send summary message only if there were new releases
             if had_new_releases:
+                # Delete previous report messages before sending new one
+                await self.delete_previous_reports()
                 await self.send_summary_message()
             else:
                 logger.info("No new releases found, skipping summary message")
