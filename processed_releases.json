@@ -1,5 +1,5 @@
 {
-  "lastReportMessageId": 765,
+  "lastReportMessageId": 819,
   "Oblivion": "v7",
   "OblivionDesktop": "v3.11.0",
   "DefyxVPN": "v5.1.0",
@@ -12,14 +12,16 @@
   "GNet": "v1.0.4",
   "finDns": "v0.2.2.1",
   "Begzar": "v6.0.0",
-  "Happ": "3.15.0",
-  "v2rayN": "7.19.4",
+  "Happ": "3.15.1",
+  "v2rayN": "7.19.5",
   "v2rayNG": "2.0.15",
   "MahsaAlert": "V7.0",
   "Amnezia": "4.8.14.5",
   "SlipstreamPlus": "v1.1.20",
   "DnsTtXyz": "v2.2.0",
   "NoizDNS": "v1.4.0",
-  "DnsTunEzpz": "v0.3.1",
-  "SlipStreamGUI": "v1.4.4"
+  "DnsTunEzpz": "v0.4.0",
+  "SlipStreamGUI": "v1.4.4",
+  "xrayKnife": "v9.10.15",
+  "zedSecure": "v1.8.1"
 }
