@@ -1,5 +1,5 @@
 {
-  "lastReportMessageId": 819,
+  "lastReportMessageId": 839,
   "Oblivion": "v7",
   "OblivionDesktop": "v3.11.0",
   "DefyxVPN": "v5.1.0",
@@ -23,5 +23,6 @@
   "DnsTunEzpz": "v0.4.0",
   "SlipStreamGUI": "v1.4.4",
   "xrayKnife": "v9.10.15",
-  "zedSecure": "v1.8.1"
+  "zedSecure": "v1.8.1",
+  "MasterDns": "v2026.03.16.194017-11256ef"
 }
