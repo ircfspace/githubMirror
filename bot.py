@@ -285,7 +285,7 @@ class GitHubReleaseBot:
         
         # Send introduction message
         if repo.github_url:
-            intro_caption = f"🚀 New Release: #{repo.name}\n\n📦 Version: {release.get('tag_name', 'N/A')}\n📅 Date: {release.get('published_at', 'N/A')}\n\n🔗 Github: {repo.github_url}"
+            intro_caption = f"🚀 New Release: #{repo.name}\n\n📦 Version: {release.get('tag_name', 'N/A')}\n📅 Date: {release.get('published_at', 'N/A')}\n\n🔗 Github: {repo.github_url}\n🔗 Releases: {repo.github_url}/releases"
             button_text = "🔗 Github Mirror"
         elif repo.google_play_url:
             intro_caption = f"🚀 New Release: #{repo.name}\n\n📦 Version: {release.get('tag_name', 'N/A')}\n📅 Date: {release.get('published_at', 'N/A')}\n\n🤖 Google Play: {repo.google_play_url}"
@@ -516,12 +516,12 @@ class GitHubReleaseBot:
         # Build message text
         message_text = "#گزارش\n"
         message_text += "وضعیت آخرین بروزرسانی برنامه‌ها مورد بررسی قرار گرفت.\n\n"
-        message_text += "پروژه‌های پشتیبانی شده:\n"
+        message_text += "📦 پروژه‌های پشتیبانی شده:\n"
         
         # Add each repository with its last processed version
         for repo in self.config.repositories:
             last_version = self.processed_releases.get(repo.name, 'نامشخص')
-            message_text += f"#{repo.name}: {last_version}\n"
+            message_text += f"#{repo.name}: `{last_version}`\n"
         
         # Create buttons
         channel_url = f"https://t.me/{channel_username}" if channel_username else f"https://t.me/c/{abs(channel_id)}"
