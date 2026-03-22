@@ -285,7 +285,7 @@ class GitHubReleaseBot:
         
         # Send introduction message
         if repo.github_url:
-            intro_caption = f"🚀 New Release: #{repo.name}\n\n📦 Version: {release.get('tag_name', 'N/A')}\n🏷️ Type: {'Pre-release' if release.get('prerelease', False) else 'Stable'}\n📅 Date: {release.get('published_at', 'N/A')}\n\n⚓️ Github: {repo.github_url}\n🔗 Releases: {repo.github_url}/releases"
+            intro_caption = f"🚀 New Release: #{repo.name}\n\n📦 Version: {release.get('tag_name', 'N/A')}\n🏷️ Type: {'Pre-release' if release.get('prerelease', False) else 'Stable'}\n📅 Date: {release.get('published_at', 'N/A')}\n\n⚓️ Github: {repo.github_url}\n🔗 {repo.github_url}/releases"
             button_text = "🔗 Github Mirror"
         elif repo.google_play_url:
             intro_caption = f"🚀 New Release: #{repo.name}\n\n📦 Version: {release.get('tag_name', 'N/A')}\n📅 Date: {release.get('published_at', 'N/A')}\n\n🤖 Google Play: {repo.google_play_url}"
