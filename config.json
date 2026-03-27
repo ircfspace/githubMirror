@@ -185,6 +185,20 @@
       "google_play_url": "",
       "apple_store_url": "",
       "microsoft_store_url": ""
+    },
+    {
+      "name": "theFeed",
+      "github_url": "https://github.com/sartoopjj/thefeed",
+      "google_play_url": "",
+      "apple_store_url": "",
+      "microsoft_store_url": ""
+    },
+    {
+      "name": "Kabootar",
+      "github_url": "https://github.com/ppouria/kabootar",
+      "google_play_url": "",
+      "apple_store_url": "",
+      "microsoft_store_url": ""
     }
   ]
 }
