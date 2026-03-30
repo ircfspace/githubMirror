@@ -1,5 +1,5 @@
 {
-  "lastReportMessageId": 1100,
+  "lastReportMessageId": 1130,
   "Oblivion": "v7",
   "OblivionDesktop": "v3.11.0",
   "DefyxVPN": "v5.1.2",
@@ -12,8 +12,8 @@
   "GNet": "v1.0.4",
   "finDns": "v0.2.2.1",
   "Begzar": "v6.0.0",
-  "Happ": "3.15.2",
-  "v2rayN": "7.20.0",
+  "Happ": "3.16.0",
+  "v2rayN": "7.20.1",
   "v2rayNG": "2.0.17",
   "MahsaAlert": "V7.0",
   "Amnezia": "4.8.14.5",
@@ -27,5 +27,5 @@
   "MasterDns": "v2026.03.29.172753-9310623",
   "pyWarp": "v1.3.4",
   "theFeed": "v0.0.13",
-  "Kabootar": "v0.3.0"
+  "Kabootar": "v0.4.0"
 }
