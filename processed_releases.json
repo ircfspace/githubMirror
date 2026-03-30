@@ -1,5 +1,5 @@
 {
-  "lastReportMessageId": 1130,
+  "lastReportMessageId": 1143,
   "Oblivion": "v7",
   "OblivionDesktop": "v3.11.0",
   "DefyxVPN": "v5.1.2",
@@ -26,6 +26,6 @@
   "zedSecure": "v1.8.1",
   "MasterDns": "v2026.03.29.172753-9310623",
   "pyWarp": "v1.3.4",
-  "theFeed": "v0.0.13",
+  "theFeed": "v0.0.17",
   "Kabootar": "v0.4.0"
 }
