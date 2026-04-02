@@ -367,6 +367,13 @@ class GitHubReleaseBot:
                 logger.error(f"No download URL for asset: {asset_name}")
                 continue
             
+            # Skip files with unwanted extensions
+            skipped_extensions = {'.sha256', '.txt', '.yml', '.blockmap'}
+            file_extension = os.path.splitext(asset_name)[1].lower()
+            if file_extension in skipped_extensions:
+                logger.info(f"Skipping asset {asset_name} (unwanted extension: {file_extension})")
+                continue
+            
             logger.info(f"Processing asset: {asset_name}")
             
             # Download file to temp
