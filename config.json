@@ -199,6 +199,13 @@
       "google_play_url": "",
       "apple_store_url": "",
       "microsoft_store_url": ""
+    },
+    {
+      "name": "Kabootar",
+      "github_url": "https://github.com/net2share/vaydns",
+      "google_play_url": "",
+      "apple_store_url": "",
+      "microsoft_store_url": ""
     }
   ]
 }
