@@ -269,6 +269,8 @@ class GitHubReleaseBot:
     
     async def send_release_to_channel(self, repo: Repository, release: dict):
         """Send release to channel"""
+        import os
+        
         # Get channel info
         channel_id = self.config.telegram.get('channel_id')
         channel_username = self.config.telegram.get('channel_username', '').lstrip('@')
