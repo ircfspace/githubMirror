@@ -1,5 +1,5 @@
 {
-  "lastReportMessageId": 2013,
+  "lastReportMessageId": 2102,
   "Oblivion": "v7",
   "OblivionDesktop": "v3.11.0",
   "DefyxVPN": "v5.2.3",
@@ -24,9 +24,9 @@
   "SlipStreamGUI": "v1.4.4",
   "xrayKnife": "v9.10.15",
   "zedSecure": "v1.8.1",
-  "MasterDns": "v2026.04.05.043512-f3a469b",
+  "MasterDns": "v2026.04.05.191930-7757d2d",
   "pyWarp": "v1.3.4",
-  "theFeed": "v0.3.1",
+  "theFeed": "v0.4.0-rc1",
   "Kabootar": "v0.6.1",
   "vayDNS": "v0.2.7",
   "slipGate": "v1.6.0-dev",
