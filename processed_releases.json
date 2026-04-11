@@ -1,5 +1,5 @@
 {
-  "lastReportMessageId": 2443,
+  "lastReportMessageId": 2447,
   "Oblivion": "v7",
   "OblivionDesktop": "v3.11.0",
   "DefyxVPN": "v5.2.4",
@@ -29,7 +29,7 @@
   "theFeed": "v0.5.1",
   "Kabootar": "v0.6.1",
   "vayDNS": "v0.2.8",
-  "slipGate": "v1.6.1",
+  "slipGate": "v1.6.2-dev",
   "Karing": "v1.2.17.2000",
   "Termux": "v0.119.0-beta.3"
 }
