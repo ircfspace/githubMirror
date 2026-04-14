@@ -234,6 +234,13 @@
       "google_play_url": "",
       "apple_store_url": "",
       "microsoft_store_url": ""
+    },
+    {
+      "name": "SniSpoofingRust",
+      "github_url": "https://github.com/therealaleph/sni-spoofing-rust",
+      "google_play_url": "",
+      "apple_store_url": "",
+      "microsoft_store_url": ""
     }
   ]
 }
