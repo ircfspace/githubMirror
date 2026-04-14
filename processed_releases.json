@@ -1,5 +1,5 @@
 {
-  "lastReportMessageId": 2675,
+  "lastReportMessageId": 2689,
   "Oblivion": "v7",
   "OblivionDesktop": "v3.11.0",
   "DefyxVPN": "v5.2.4",
@@ -16,7 +16,7 @@
   "v2rayN": "7.20.3",
   "v2rayNG": "2.0.18",
   "MahsaAlert": "V7.0",
-  "Amnezia": "4.8.14.5",
+  "Amnezia": "4.8.15.0",
   "SlipstreamPlus": "v1.1.20",
   "DnsTtXyz": "v2.2.0",
   "NoizDNS": "v1.4.0",
@@ -33,5 +33,5 @@
   "Karing": "v1.2.17.2002",
   "Termux": "v0.119.0-beta.3",
   "SniSpoofing": "v1.0",
-  "SniSpoofingRust": "v0.2.0"
+  "SniSpoofingRust": "v0.3.0"
 }
