@@ -1,5 +1,5 @@
 {
-  "lastReportMessageId": 2707,
+  "lastReportMessageId": 2738,
   "Oblivion": "v7",
   "OblivionDesktop": "v3.11.0",
   "DefyxVPN": "v5.2.4",
@@ -26,11 +26,11 @@
   "zedSecure": "v1.8.1",
   "MasterDns": "v2026.04.12.234117-978faee",
   "pyWarp": "v1.3.4",
-  "theFeed": "v0.10.0-rc3",
+  "theFeed": "v0.10.0-rc6",
   "Kabootar": "v0.7.2",
   "vayDNS": "v0.2.8",
   "slipGate": "v1.6.2",
-  "Karing": "v1.2.17.2002",
+  "Karing": "v1.2.17.2003",
   "Termux": "v0.119.0-beta.3",
   "SniSpoofing": "v1.0",
   "SniSpoofingRust": "v0.3.0"
