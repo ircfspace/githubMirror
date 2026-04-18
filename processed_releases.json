@@ -1,8 +1,8 @@
 {
-  "lastReportMessageId": 2858,
+  "lastReportMessageId": 2873,
   "Oblivion": "v7",
   "OblivionDesktop": "v3.11.0",
-  "DefyxVPN": "v5.2.7",
+  "DefyxVPN": "v5.2.8",
   "Hiddify": "v4.1.1",
   "MahsaNG": "v15-(1405-1-22)",
   "SlipNet": "v2.5.0",
@@ -15,7 +15,7 @@
   "Happ": "3.18.1",
   "v2rayN": "7.20.4",
   "v2rayNG": "2.1.0",
-  "MahsaAlert": "V7.0",
+  "MahsaAlert": "V10",
   "Amnezia": "4.8.15.0",
   "SlipstreamPlus": "v1.1.20",
   "DnsTtXyz": "v2.2.0",
@@ -33,5 +33,5 @@
   "Karing": "v1.2.17.2004",
   "Termux": "v0.119.0-beta.3",
   "SniSpoofing": "v1.0",
-  "SniSpoofingRust": "v0.3.0"
+  "SniSpoofingRust": "v0.3.1"
 }
