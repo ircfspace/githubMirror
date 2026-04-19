@@ -208,6 +208,13 @@
       "microsoft_store_url": ""
     },
     {
+      "name": "vayDnsClient",
+      "github_url": "https://github.com/Starling226/vaydns-vpn",
+      "google_play_url": "",
+      "apple_store_url": "",
+      "microsoft_store_url": ""
+    },
+    {
       "name": "slipGate",
       "github_url": "https://github.com/anonvector/slipgate",
       "google_play_url": "",
