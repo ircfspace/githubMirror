@@ -262,13 +262,6 @@
       "google_play_url": "",
       "apple_store_url": "",
       "microsoft_store_url": ""
-    },
-    {
-      "name": "WindscribeAndroid",
-      "github_url": "https://github.com/Windscribe/Android-App",
-      "google_play_url": "",
-      "apple_store_url": "",
-      "microsoft_store_url": ""
     }
   ]
 }
