@@ -269,6 +269,13 @@
       "google_play_url": "",
       "apple_store_url": "",
       "microsoft_store_url": ""
+    },
+    {
+      "name": "Loole",
+      "github_url": "https://github.com/g3ntrix/Loole",
+      "google_play_url": "",
+      "apple_store_url": "",
+      "microsoft_store_url": ""
     }
   ]
 }
