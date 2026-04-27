@@ -1,5 +1,5 @@
 {
-  "lastReportMessageId": 3465,
+  "lastReportMessageId": 3503,
   "Oblivion": "v7",
   "OblivionDesktop": "v3.11.0",
   "DefyxVPN": "v5.2.8",
@@ -26,7 +26,7 @@
   "zedSecure": "v1.8.1",
   "MasterDns": "v2026.04.12.234117-978faee",
   "pyWarp": "v1.3.4",
-  "theFeed": "v0.12.0",
+  "theFeed": "v0.12.2",
   "Kabootar": "v0.7.2",
   "vayDNS": "v0.2.8",
   "slipGate": "v1.6.3",
@@ -36,7 +36,7 @@
   "SniSpoofingRust": "v0.5.1",
   "rangeScout": "v0.1.2",
   "vayDnsClient": "v1.7.4",
-  "MasterHttpRelayRust": "v1.7.7",
-  "Shade": "v1.2.0",
+  "MasterHttpRelayRust": "v1.7.9",
+  "Shade": "v1.2.1",
   "Loole": "v0.1.1"
 }
