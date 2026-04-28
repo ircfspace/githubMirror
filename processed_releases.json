@@ -1,5 +1,5 @@
 {
-  "lastReportMessageId": 3503,
+  "lastReportMessageId": 3524,
   "Oblivion": "v7",
   "OblivionDesktop": "v3.11.0",
   "DefyxVPN": "v5.2.8",
@@ -35,8 +35,8 @@
   "SniSpoofing": "v1.0",
   "SniSpoofingRust": "v0.5.1",
   "rangeScout": "v0.1.2",
-  "vayDnsClient": "v1.7.4",
-  "MasterHttpRelayRust": "v1.7.9",
+  "vayDnsClient": "v1.7.5",
+  "MasterHttpRelayRust": "v1.8.0",
   "Shade": "v1.2.1",
   "Loole": "v0.1.1"
 }
