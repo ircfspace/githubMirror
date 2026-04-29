@@ -276,6 +276,13 @@
       "google_play_url": "",
       "apple_store_url": "",
       "microsoft_store_url": ""
+    },
+    {
+      "name": "CFScanner",
+      "github_url": "https://github.com/MortezaBashsiz/CFScanner",
+      "google_play_url": "",
+      "apple_store_url": "",
+      "microsoft_store_url": ""
     }
   ]
 }
