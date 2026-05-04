@@ -1,5 +1,5 @@
 {
-  "lastReportMessageId": 4127,
+  "lastReportMessageId": 4132,
   "Oblivion": "v7",
   "OblivionDesktop": "v3.11.0",
   "DefyxVPN": "v5.2.8",
@@ -39,5 +39,6 @@
   "MasterHttpRelayRust": "v1.9.9",
   "Shade": "v1.4.1",
   "Loole": "v0.1.2",
-  "CFScanner": "win-v1.4.96"
+  "CFScanner": "win-v1.4.96",
+  "teleMirror": "v1.3.3"
 }
