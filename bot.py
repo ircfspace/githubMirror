@@ -176,6 +176,42 @@ class GitHubReleaseBot:
             logger.error(f"Error loading config: {e}")
             raise
     
+    def get_latest_version(self, repo_name: str) -> str:
+        """Get latest version for a repository from new array structure"""
+        releases = self.processed_releases.get(repo_name, [])
+        if isinstance(releases, list) and releases:
+            return releases[0].get('version', '')
+        elif isinstance(releases, str):
+            # Handle old format for backward compatibility
+            return releases
+        return ''
+    
+    def add_version(self, repo_name: str, version: str):
+        """Add new version to repository with current timestamp"""
+        current_time = int(time.time())
+        
+        # Get existing releases
+        releases = self.processed_releases.get(repo_name, [])
+        
+        # Handle old format
+        if isinstance(releases, str):
+            releases = [{'version': releases, 'timestamp': current_time}]
+        
+        # Add new version at the beginning (newest first)
+        new_entry = {'version': version, 'timestamp': current_time}
+        
+        # Check if this version already exists
+        for i, entry in enumerate(releases):
+            if entry.get('version') == version:
+                # Update timestamp of existing version
+                releases[i] = new_entry
+                break
+        else:
+            # Add new version
+            releases.insert(0, new_entry)
+        
+        self.processed_releases[repo_name] = releases
+    
     def load_processed_releases(self):
         """Load processed releases from file"""
         try:
@@ -527,10 +563,37 @@ class GitHubReleaseBot:
         message_text += "وضعیت آخرین بروزرسانی برنامه‌ها مورد بررسی قرار گرفت.\n\n"
         message_text += "📦 پروژه‌های پشتیبانی شده:\n"
         
-        # Add each repository with its last processed version
+        # Create list of repositories with their latest info for sorting
+        repo_info = []
         for repo in self.config.repositories:
-            last_version = self.processed_releases.get(repo.name, 'نامشخص')
-            message_text += f"#{repo.name}: `{last_version}`\n"
+            releases = self.processed_releases.get(repo.name, [])
+            if isinstance(releases, list) and releases:
+                latest_entry = releases[0]
+                repo_info.append({
+                    'name': repo.name,
+                    'version': latest_entry.get('version', 'نامشخص'),
+                    'timestamp': latest_entry.get('timestamp', 0)
+                })
+            elif isinstance(releases, str):
+                # Handle old format
+                repo_info.append({
+                    'name': repo.name,
+                    'version': releases,
+                    'timestamp': 0  # Old entries get timestamp 0, will appear first
+                })
+            else:
+                repo_info.append({
+                    'name': repo.name,
+                    'version': 'نامشخص',
+                    'timestamp': 0
+                })
+        
+        # Sort by timestamp (oldest first, newest last)
+        repo_info.sort(key=lambda x: x['timestamp'])
+        
+        # Add sorted repositories to message
+        for info in repo_info:
+            message_text += f"#{info['name']}: `{info['version']}`\n"
         
         # Create buttons
         channel_url = f"https://t.me/{channel_username}" if channel_username else f"https://t.me/c/{abs(channel_id)}"
@@ -598,11 +661,11 @@ class GitHubReleaseBot:
                     continue
                 
                 tag = latest_release.get('tag_name', '')
-                stored_tag = self.processed_releases.get(repo.name, '')
+                stored_tag = self.get_latest_version(repo.name)
                 if self.is_newer_version(tag, stored_tag):
                     logger.info(f"Latest release for {repo.name}: {tag}")
                     await self.send_release_to_channel(repo, latest_release)
-                    self.processed_releases[repo.name] = tag
+                    self.add_version(repo.name, tag)
                     self.save_processed_releases()
                     had_new_releases = True
                 else:

@@ -1,44 +1,249 @@
 {
   "lastReportMessageId": 4294,
-  "Oblivion": "v7",
-  "OblivionDesktop": "v3.11.0",
-  "DefyxVPN": "v5.2.8",
-  "Hiddify": "v4.1.1",
-  "MahsaNG": "v15-(1405-1-22)",
-  "SlipNet": "v2.5.3",
-  "ShiroKhorshid": "v2026.03.17-75fc6ed",
-  "IRBox": "v1.0.2",
-  "Zemzeme": "v2.0.0",
-  "GNet": "v1.0.4",
-  "finDns": "v0.2.2.1",
-  "Begzar": "v6.0.0",
-  "Happ": "3.20.2",
-  "v2rayN": "7.21.1",
-  "v2rayNG": "2.1.5",
-  "MahsaAlert": "V10",
-  "Amnezia": "4.8.15.4",
-  "SlipstreamPlus": "v1.1.20",
-  "DnsTtXyz": "v2.2.0",
-  "NoizDNS": "v1.4.0",
-  "DnsTunEzpz": "v0.4.0",
-  "SlipStreamGUI": "v1.4.4",
-  "xrayKnife": "v9.10.15",
-  "zedSecure": "v1.8.1",
-  "MasterDns": "v2026.05.04.123456-38b73de",
-  "pyWarp": "v1.3.4",
-  "theFeed": "v0.16.2",
-  "Kabootar": "v0.7.2",
-  "vayDNS": "v0.2.8",
-  "slipGate": "v1.6.4",
-  "Karing": "v1.2.19.2200",
-  "Termux": "v0.119.0-beta.3",
-  "SniSpoofing": "v1.0",
-  "SniSpoofingRust": "v0.5.1",
-  "rangeScout": "v0.1.2",
-  "vayDnsClient": "v1.8.0",
-  "MasterHttpRelayRust": "v1.9.14",
-  "Shade": "v1.5.0",
-  "Loole": "v0.1.2",
-  "CFScanner": "win-v1.4.96",
-  "teleMirror": "v2.0.1"
+  "Oblivion": [
+    {
+      "version": "v7",
+      "timestamp": 1778083372
+    }
+  ],
+  "OblivionDesktop": [
+    {
+      "version": "v3.11.0",
+      "timestamp": 1778083372
+    }
+  ],
+  "DefyxVPN": [
+    {
+      "version": "v5.2.8",
+      "timestamp": 1778083372
+    }
+  ],
+  "Hiddify": [
+    {
+      "version": "v4.1.1",
+      "timestamp": 1778083372
+    }
+  ],
+  "MahsaNG": [
+    {
+      "version": "v15-(1405-1-22)",
+      "timestamp": 1778083372
+    }
+  ],
+  "SlipNet": [
+    {
+      "version": "v2.5.3",
+      "timestamp": 1778083372
+    }
+  ],
+  "ShiroKhorshid": [
+    {
+      "version": "v2026.03.17-75fc6ed",
+      "timestamp": 1778083372
+    }
+  ],
+  "IRBox": [
+    {
+      "version": "v1.0.2",
+      "timestamp": 1778083372
+    }
+  ],
+  "Zemzeme": [
+    {
+      "version": "v2.0.0",
+      "timestamp": 1778083372
+    }
+  ],
+  "GNet": [
+    {
+      "version": "v1.0.4",
+      "timestamp": 1778083372
+    }
+  ],
+  "finDns": [
+    {
+      "version": "v0.2.2.1",
+      "timestamp": 1778083372
+    }
+  ],
+  "Begzar": [
+    {
+      "version": "v6.0.0",
+      "timestamp": 1778083372
+    }
+  ],
+  "Happ": [
+    {
+      "version": "3.20.2",
+      "timestamp": 1778083372
+    }
+  ],
+  "v2rayN": [
+    {
+      "version": "7.21.1",
+      "timestamp": 1778083372
+    }
+  ],
+  "v2rayNG": [
+    {
+      "version": "2.1.5",
+      "timestamp": 1778083372
+    }
+  ],
+  "MahsaAlert": [
+    {
+      "version": "V10",
+      "timestamp": 1778083372
+    }
+  ],
+  "Amnezia": [
+    {
+      "version": "4.8.15.4",
+      "timestamp": 1778083372
+    }
+  ],
+  "SlipstreamPlus": [
+    {
+      "version": "v1.1.20",
+      "timestamp": 1778083372
+    }
+  ],
+  "DnsTtXyz": [
+    {
+      "version": "v2.2.0",
+      "timestamp": 1778083372
+    }
+  ],
+  "NoizDNS": [
+    {
+      "version": "v1.4.0",
+      "timestamp": 1778083372
+    }
+  ],
+  "DnsTunEzpz": [
+    {
+      "version": "v0.4.0",
+      "timestamp": 1778083372
+    }
+  ],
+  "SlipStreamGUI": [
+    {
+      "version": "v1.4.4",
+      "timestamp": 1778083372
+    }
+  ],
+  "xrayKnife": [
+    {
+      "version": "v9.10.15",
+      "timestamp": 1778083372
+    }
+  ],
+  "zedSecure": [
+    {
+      "version": "v1.8.1",
+      "timestamp": 1778083372
+    }
+  ],
+  "MasterDns": [
+    {
+      "version": "v2026.05.04.123456-38b73de",
+      "timestamp": 1778083372
+    }
+  ],
+  "pyWarp": [
+    {
+      "version": "v1.3.4",
+      "timestamp": 1778083372
+    }
+  ],
+  "theFeed": [
+    {
+      "version": "v0.16.2",
+      "timestamp": 1778083372
+    }
+  ],
+  "Kabootar": [
+    {
+      "version": "v0.7.2",
+      "timestamp": 1778083372
+    }
+  ],
+  "vayDNS": [
+    {
+      "version": "v0.2.8",
+      "timestamp": 1778083372
+    }
+  ],
+  "slipGate": [
+    {
+      "version": "v1.6.4",
+      "timestamp": 1778083372
+    }
+  ],
+  "Karing": [
+    {
+      "version": "v1.2.19.2200",
+      "timestamp": 1778083372
+    }
+  ],
+  "Termux": [
+    {
+      "version": "v0.119.0-beta.3",
+      "timestamp": 1778083372
+    }
+  ],
+  "SniSpoofing": [
+    {
+      "version": "v1.0",
+      "timestamp": 1778083372
+    }
+  ],
+  "SniSpoofingRust": [
+    {
+      "version": "v0.5.1",
+      "timestamp": 1778083372
+    }
+  ],
+  "rangeScout": [
+    {
+      "version": "v0.1.2",
+      "timestamp": 1778083372
+    }
+  ],
+  "vayDnsClient": [
+    {
+      "version": "v1.8.0",
+      "timestamp": 1778083372
+    }
+  ],
+  "MasterHttpRelayRust": [
+    {
+      "version": "v1.9.14",
+      "timestamp": 1778083372
+    }
+  ],
+  "Shade": [
+    {
+      "version": "v1.5.0",
+      "timestamp": 1778083372
+    }
+  ],
+  "Loole": [
+    {
+      "version": "v0.1.2",
+      "timestamp": 1778083372
+    }
+  ],
+  "CFScanner": [
+    {
+      "version": "win-v1.4.96",
+      "timestamp": 1778083372
+    }
+  ],
+  "teleMirror": [
+    {
+      "version": "v2.0.1",
+      "timestamp": 1778083372
+    }
+  ]
 }
