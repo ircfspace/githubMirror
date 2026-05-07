@@ -1,5 +1,5 @@
 {
-  "lastReportMessageId": 4354,
+  "lastReportMessageId": 4394,
   "Oblivion": [
     {
       "version": "v7",
@@ -73,6 +73,10 @@
     }
   ],
   "Happ": [
+    {
+      "version": "3.20.3",
+      "timestamp": 1778183446
+    },
     {
       "version": "3.20.2",
       "timestamp": 1778083372
@@ -158,6 +162,10 @@
   ],
   "theFeed": [
     {
+      "version": "v0.17.2-rc2",
+      "timestamp": 1778183747
+    },
+    {
       "version": "v0.17.1-rc1",
       "timestamp": 1778164600
     },
@@ -221,6 +229,10 @@
     }
   ],
   "MasterHttpRelayRust": [
+    {
+      "version": "v1.9.17",
+      "timestamp": 1778184045
+    },
     {
       "version": "v1.9.15",
       "timestamp": 1778125612
