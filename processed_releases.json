@@ -1,5 +1,5 @@
 {
-  "lastReportMessageId": 4323,
+  "lastReportMessageId": 4334,
   "Oblivion": [
     {
       "version": "v7",
@@ -245,6 +245,10 @@
     }
   ],
   "teleMirror": [
+    {
+      "version": "v2.7.1",
+      "timestamp": 1778138874
+    },
     {
       "version": "v2.3.0",
       "timestamp": 1778084480
