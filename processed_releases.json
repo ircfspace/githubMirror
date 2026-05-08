@@ -1,5 +1,5 @@
 {
-  "lastReportMessageId": 4446,
+  "lastReportMessageId": 4488,
   "Oblivion": [
     {
       "version": "v7",
@@ -88,6 +88,10 @@
   ],
   "v2rayN": [
     {
+      "version": "7.21.2",
+      "timestamp": 1778247809
+    },
+    {
       "version": "7.21.1",
       "timestamp": 1778083372
     }
@@ -148,6 +152,10 @@
   ],
   "zedSecure": [
     {
+      "version": "v1.9.0",
+      "timestamp": 1778248069
+    },
+    {
       "version": "v1.8.1",
       "timestamp": 1778083372
     }
@@ -165,6 +173,10 @@
     }
   ],
   "theFeed": [
+    {
+      "version": "v0.17.4",
+      "timestamp": 1778248427
+    },
     {
       "version": "v0.17.3-rc2",
       "timestamp": 1778211613
