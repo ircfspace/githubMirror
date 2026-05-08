@@ -1,5 +1,5 @@
 {
-  "lastReportMessageId": 4495,
+  "lastReportMessageId": 4499,
   "Oblivion": [
     {
       "version": "v7",
@@ -151,6 +151,10 @@
     }
   ],
   "zedSecure": [
+    {
+      "version": "v1.9.0",
+      "timestamp": 1778249580
+    },
     {
       "version": "v1.8.9",
       "timestamp": 1778248069
