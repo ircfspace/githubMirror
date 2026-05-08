@@ -1,5 +1,5 @@
 {
-  "lastReportMessageId": 4499,
+  "lastReportMessageId": 4503,
   "Oblivion": [
     {
       "version": "v7",
@@ -310,6 +310,12 @@
     {
       "version": "v2.6.0",
       "timestamp": 1778248907
+    }
+  ],
+  "Pigeon": [
+    {
+      "version": "v1.0.2",
+      "timestamp": 1778249743
     }
   ]
 }
