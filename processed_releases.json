@@ -1,5 +1,5 @@
 {
-  "lastReportMessageId": 4488,
+  "lastReportMessageId": 4495,
   "Oblivion": [
     {
       "version": "v7",
@@ -300,6 +300,12 @@
     {
       "version": "v2.0.1",
       "timestamp": 1778083372
+    }
+  ],
+  "roundSync": [
+    {
+      "version": "v2.6.0",
+      "timestamp": 1778248907
     }
   ]
 }
