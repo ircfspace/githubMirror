@@ -1,5 +1,5 @@
 {
-  "lastReportMessageId": 4432,
+  "lastReportMessageId": 4446,
   "Oblivion": [
     {
       "version": "v7",
@@ -73,6 +73,10 @@
     }
   ],
   "Happ": [
+    {
+      "version": "3.20.4",
+      "timestamp": 1778226716
+    },
     {
       "version": "3.20.3",
       "timestamp": 1778183446
@@ -197,6 +201,10 @@
     }
   ],
   "Karing": [
+    {
+      "version": "v1.2.19.2201",
+      "timestamp": 1778227649
+    },
     {
       "version": "v1.2.19.2200",
       "timestamp": 1778083372
