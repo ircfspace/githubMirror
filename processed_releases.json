@@ -1,5 +1,5 @@
 {
-  "lastReportMessageId": 4595,
+  "lastReportMessageId": 4609,
   "Oblivion": [
     {
       "version": "v7",
@@ -212,8 +212,8 @@
   ],
   "vayDnsClient": [
     {
-      "version": "v1.8.0",
-      "timestamp": 1778083372
+      "version": "v1.9.0",
+      "timestamp": 1778353980
     }
   ],
   "MasterHttpRelayRust": [
@@ -242,8 +242,8 @@
   ],
   "teleMirror": [
     {
-      "version": "v2.7.1",
-      "timestamp": 1778138874
+      "version": "v3.2.0",
+      "timestamp": 1778355042
     }
   ],
   "roundSync": [
