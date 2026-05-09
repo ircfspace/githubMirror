@@ -187,7 +187,7 @@ class GitHubReleaseBot:
         return ''
     
     def add_version(self, repo_name: str, version: str):
-        """Add new version to repository with current timestamp"""
+        """Add new version to repository with current timestamp, keeping only the latest version"""
         current_time = int(time.time())
         
         # Get existing releases
@@ -197,20 +197,11 @@ class GitHubReleaseBot:
         if isinstance(releases, str):
             releases = [{'version': releases, 'timestamp': current_time}]
         
-        # Add new version at the beginning (newest first)
+        # Create new entry
         new_entry = {'version': version, 'timestamp': current_time}
         
-        # Check if this version already exists
-        for i, entry in enumerate(releases):
-            if entry.get('version') == version:
-                # Update timestamp of existing version
-                releases[i] = new_entry
-                break
-        else:
-            # Add new version
-            releases.insert(0, new_entry)
-        
-        self.processed_releases[repo_name] = releases
+        # Keep only the latest version (replace the entire list with just the new version)
+        self.processed_releases[repo_name] = [new_entry]
     
     def load_processed_releases(self):
         """Load processed releases from file"""

@@ -76,34 +76,18 @@
     {
       "version": "3.20.4",
       "timestamp": 1778226716
-    },
-    {
-      "version": "3.20.3",
-      "timestamp": 1778183446
-    },
-    {
-      "version": "3.20.2",
-      "timestamp": 1778083372
     }
   ],
   "v2rayN": [
     {
       "version": "7.21.2",
       "timestamp": 1778247809
-    },
-    {
-      "version": "7.21.1",
-      "timestamp": 1778083372
     }
   ],
   "v2rayNG": [
     {
       "version": "2.1.6",
       "timestamp": 1778314293
-    },
-    {
-      "version": "2.1.5",
-      "timestamp": 1778083372
     }
   ],
   "MahsaAlert": [
@@ -158,14 +142,6 @@
     {
       "version": "v1.9.0",
       "timestamp": 1778249580
-    },
-    {
-      "version": "v1.8.9",
-      "timestamp": 1778248069
-    },
-    {
-      "version": "v1.8.1",
-      "timestamp": 1778083372
     }
   ],
   "MasterDns": [
@@ -184,34 +160,6 @@
     {
       "version": "v0.17.5",
       "timestamp": 1778334245
-    },
-    {
-      "version": "v0.17.5-rc4",
-      "timestamp": 1778298112
-    },
-    {
-      "version": "v0.17.5-rc3",
-      "timestamp": 1778269370
-    },
-    {
-      "version": "v0.17.4",
-      "timestamp": 1778248427
-    },
-    {
-      "version": "v0.17.3-rc2",
-      "timestamp": 1778211613
-    },
-    {
-      "version": "v0.17.2-rc2",
-      "timestamp": 1778183747
-    },
-    {
-      "version": "v0.17.1-rc1",
-      "timestamp": 1778164600
-    },
-    {
-      "version": "v0.16.2",
-      "timestamp": 1778083372
     }
   ],
   "Kabootar": [
@@ -236,14 +184,6 @@
     {
       "version": "v1.2.19.2202",
       "timestamp": 1778335025
-    },
-    {
-      "version": "v1.2.19.2201",
-      "timestamp": 1778227649
-    },
-    {
-      "version": "v1.2.19.2200",
-      "timestamp": 1778083372
     }
   ],
   "Termux": [
@@ -280,18 +220,6 @@
     {
       "version": "v1.9.18",
       "timestamp": 1778211882
-    },
-    {
-      "version": "v1.9.17",
-      "timestamp": 1778184045
-    },
-    {
-      "version": "v1.9.15",
-      "timestamp": 1778125612
-    },
-    {
-      "version": "v1.9.14",
-      "timestamp": 1778083372
     }
   ],
   "Shade": [
@@ -316,14 +244,6 @@
     {
       "version": "v2.7.1",
       "timestamp": 1778138874
-    },
-    {
-      "version": "v2.3.0",
-      "timestamp": 1778084480
-    },
-    {
-      "version": "v2.0.1",
-      "timestamp": 1778083372
     }
   ],
   "roundSync": [
@@ -336,10 +256,6 @@
     {
       "version": "v1.1.3",
       "timestamp": 1778298162
-    },
-    {
-      "version": "v1.0.2",
-      "timestamp": 1778249743
     }
   ]
 }
