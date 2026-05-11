@@ -1,5 +1,5 @@
 {
-  "lastReportMessageId": 4744,
+  "lastReportMessageId": 4774,
   "Oblivion": [
     {
       "version": "v7",
@@ -218,8 +218,8 @@
   ],
   "MasterHttpRelayRust": [
     {
-      "version": "v1.9.19",
-      "timestamp": 1778441638
+      "version": "v1.9.21",
+      "timestamp": 1778472564
     }
   ],
   "Shade": [
@@ -260,8 +260,8 @@
   ],
   "whiteDNS": [
     {
-      "version": "1.0.0",
-      "timestamp": 1778418899
+      "version": "1.1.0",
+      "timestamp": 1778472697
     }
   ]
 }
