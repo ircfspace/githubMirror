@@ -1,5 +1,5 @@
 {
-  "lastReportMessageId": 4819,
+  "lastReportMessageId": 4838,
   "Oblivion": [
     {
       "version": "v7",
@@ -134,8 +134,8 @@
   ],
   "xrayKnife": [
     {
-      "version": "v9.10.15",
-      "timestamp": 1778083372
+      "version": "v9.11.0",
+      "timestamp": 1778596955
     }
   ],
   "zedSecure": [
@@ -212,8 +212,8 @@
   ],
   "vayDnsClient": [
     {
-      "version": "v1.9.1",
-      "timestamp": 1778401656
+      "version": "v1.10.0",
+      "timestamp": 1778597030
     }
   ],
   "MasterHttpRelayRust": [
