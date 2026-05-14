@@ -1,5 +1,5 @@
 {
-  "lastReportMessageId": 4912,
+  "lastReportMessageId": 4952,
   "Oblivion": [
     {
       "version": "v7",
@@ -182,8 +182,8 @@
   ],
   "Karing": [
     {
-      "version": "v1.2.19.2203",
-      "timestamp": 1778558569
+      "version": "v1.2.19.2206",
+      "timestamp": 1778731528
     }
   ],
   "Termux": [
@@ -218,8 +218,8 @@
   ],
   "MasterHttpRelayRust": [
     {
-      "version": "v1.9.24",
-      "timestamp": 1778683963
+      "version": "v1.9.25",
+      "timestamp": 1778731804
     }
   ],
   "Shade": [
@@ -260,8 +260,8 @@
   ],
   "whiteDNS": [
     {
-      "version": "1.2.0",
-      "timestamp": 1778564388
+      "version": "1.3.0",
+      "timestamp": 1778731912
     }
   ],
   "tunnelX": [
