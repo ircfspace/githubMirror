@@ -397,7 +397,7 @@ class GitHubReleaseBot:
                 continue
             
             # Skip files with unwanted extensions
-            skipped_extensions = {'.sha256', '.txt', '.yml', '.blockmap'}
+            skipped_extensions = {'.sha256', '.txt', '.yml', '.blockmap', '.idsig', '.md'}
             file_extension = os.path.splitext(asset_name)[1].lower()
             if file_extension in skipped_extensions:
                 logger.info(f"Skipping asset {asset_name} (unwanted extension: {file_extension})")
