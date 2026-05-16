@@ -1,5 +1,5 @@
 {
-  "lastReportMessageId": 5012,
+  "lastReportMessageId": 5050,
   "Oblivion": [
     {
       "version": "v7",
@@ -80,8 +80,8 @@
   ],
   "v2rayN": [
     {
-      "version": "7.22.0",
-      "timestamp": 1778646323
+      "version": "7.22.1",
+      "timestamp": 1778940887
     }
   ],
   "v2rayNG": [
@@ -218,8 +218,8 @@
   ],
   "MasterHttpRelayRust": [
     {
-      "version": "v1.9.26",
-      "timestamp": 1778855414
+      "version": "v1.9.27",
+      "timestamp": 1778941181
     }
   ],
   "Shade": [
@@ -266,8 +266,8 @@
   ],
   "tunnelX": [
     {
-      "version": "v1.2.24",
-      "timestamp": 1778616766
+      "version": "v1.2.25",
+      "timestamp": 1778941286
     }
   ],
   "tunnelForge": [
