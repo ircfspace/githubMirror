@@ -1,5 +1,5 @@
 {
-  "lastReportMessageId": 5077,
+  "lastReportMessageId": 5097,
   "Oblivion": [
     {
       "version": "v7",
@@ -218,8 +218,8 @@
   ],
   "MasterHttpRelayRust": [
     {
-      "version": "v1.9.28",
-      "timestamp": 1778959543
+      "version": "v1.9.29",
+      "timestamp": 1779045714
     }
   ],
   "Shade": [
@@ -266,8 +266,8 @@
   ],
   "tunnelX": [
     {
-      "version": "v1.2.26",
-      "timestamp": 1779025565
+      "version": "v1.2.29",
+      "timestamp": 1779045825
     }
   ],
   "tunnelForge": [
