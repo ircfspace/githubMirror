@@ -1,5 +1,5 @@
 {
-  "lastReportMessageId": 5173,
+  "lastReportMessageId": 5201,
   "Oblivion": [
     {
       "version": "v7",
@@ -80,8 +80,8 @@
   ],
   "v2rayN": [
     {
-      "version": "7.22.1",
-      "timestamp": 1778940887
+      "version": "7.22.2",
+      "timestamp": 1779101292
     }
   ],
   "v2rayNG": [
@@ -260,14 +260,14 @@
   ],
   "whiteDNS": [
     {
-      "version": "1.4.0",
-      "timestamp": 1778835519
+      "version": "1.5.0",
+      "timestamp": 1779101387
     }
   ],
   "tunnelX": [
     {
-      "version": "v1.2.29",
-      "timestamp": 1779045825
+      "version": "v1.2.31",
+      "timestamp": 1779101583
     }
   ],
   "tunnelForge": [
