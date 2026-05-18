@@ -1,5 +1,5 @@
 {
-  "lastReportMessageId": 5208,
+  "lastReportMessageId": 5226,
   "Oblivion": [
     {
       "version": "v7",
@@ -218,8 +218,8 @@
   ],
   "MasterHttpRelayRust": [
     {
-      "version": "v1.9.29",
-      "timestamp": 1779045714
+      "version": "v1.9.30",
+      "timestamp": 1779134188
     }
   ],
   "Shade": [
