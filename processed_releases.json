@@ -1,5 +1,5 @@
 {
-  "lastReportMessageId": 5626,
+  "lastReportMessageId": 5660,
   "Oblivion": [
     {
       "version": "v7",
@@ -32,8 +32,8 @@
   ],
   "SlipNet": [
     {
-      "version": "v2.5.3",
-      "timestamp": 1778083372
+      "version": "v2.5.5",
+      "timestamp": 1779826932
     }
   ],
   "ShiroKhorshid": [
@@ -158,8 +158,8 @@
   ],
   "theFeed": [
     {
-      "version": "v0.21.0-rc5",
-      "timestamp": 1779722802
+      "version": "v0.21.0",
+      "timestamp": 1779827462
     }
   ],
   "Kabootar": [
