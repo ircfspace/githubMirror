@@ -353,6 +353,13 @@
       "google_play_url": "",
       "apple_store_url": "",
       "microsoft_store_url": ""
+    },
+    {
+      "name": "senPaiScanner",
+      "github_url": "https://github.com/MatinSenPai/SenPaiScanner",
+      "google_play_url": "",
+      "apple_store_url": "",
+      "microsoft_store_url": ""
     }
   ]
 }
