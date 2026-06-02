@@ -1,5 +1,5 @@
 {
-  "lastReportMessageId": 5799,
+  "lastReportMessageId": 5880,
   "Oblivion": [
     {
       "version": "v7",
@@ -80,14 +80,14 @@
   ],
   "v2rayN": [
     {
-      "version": "7.22.4",
-      "timestamp": 1780029817
+      "version": "7.22.5",
+      "timestamp": 1780420509
     }
   ],
   "v2rayNG": [
     {
-      "version": "2.2.2",
-      "timestamp": 1780315032
+      "version": "2.2.3",
+      "timestamp": 1780421002
     }
   ],
   "MahsaAlert": [
@@ -98,8 +98,8 @@
   ],
   "Amnezia": [
     {
-      "version": "4.8.15.4",
-      "timestamp": 1778083372
+      "version": "4.8.16.0",
+      "timestamp": 1780421781
     }
   ],
   "SlipstreamPlus": [
@@ -158,8 +158,8 @@
   ],
   "theFeed": [
     {
-      "version": "v0.22.0-rc1",
-      "timestamp": 1780336780
+      "version": "v0.22.0-rc2",
+      "timestamp": 1780422229
     }
   ],
   "Kabootar": [
@@ -200,8 +200,8 @@
   ],
   "SniSpoofingRust": [
     {
-      "version": "v1.0.1",
-      "timestamp": 1779308857
+      "version": "v1.0.2",
+      "timestamp": 1780422437
     }
   ],
   "rangeScout": [
@@ -290,8 +290,8 @@
   ],
   "onionHop": [
     {
-      "version": "v3.0.0",
-      "timestamp": 1780375682
+      "version": "v3.0.2",
+      "timestamp": 1780422964
     }
   ],
   "spoofGUI": [
