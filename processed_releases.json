@@ -1,5 +1,5 @@
 {
-  "lastReportMessageId": 5910,
+  "lastReportMessageId": 5918,
   "Oblivion": [
     {
       "version": "v7",
@@ -284,8 +284,8 @@
   ],
   "networkChecker": [
     {
-      "version": "0.8.0",
-      "timestamp": 1779739238
+      "version": "1.0.0",
+      "timestamp": 1780462380
     }
   ],
   "onionHop": [
