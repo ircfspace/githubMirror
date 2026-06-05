@@ -1,5 +1,5 @@
 {
-  "lastReportMessageId": 5964,
+  "lastReportMessageId": 5967,
   "Oblivion": [
     {
       "version": "v7",
@@ -74,8 +74,8 @@
   ],
   "Happ": [
     {
-      "version": "3.22.1",
-      "timestamp": 1780070214
+      "version": "3.23.0",
+      "timestamp": 1780672665
     }
   ],
   "v2rayN": [
