@@ -1,5 +1,5 @@
 {
-  "lastReportMessageId": 6332,
+  "lastReportMessageId": 6432,
   "Oblivion": [
     {
       "version": "v7",
@@ -146,8 +146,8 @@
   ],
   "MasterDns": [
     {
-      "version": "v2026.05.10.180256-27c7e11",
-      "timestamp": 1778441268
+      "version": "v2026.06.13.234407-7de2476",
+      "timestamp": 1781431063
     }
   ],
   "pyWarp": [
@@ -158,8 +158,8 @@
   ],
   "theFeed": [
     {
-      "version": "v0.25.1-rc0",
-      "timestamp": 1781380262
+      "version": "v0.25.2-rc1",
+      "timestamp": 1781431481
     }
   ],
   "Kabootar": [
