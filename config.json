@@ -360,6 +360,20 @@
       "google_play_url": "",
       "apple_store_url": "",
       "microsoft_store_url": ""
+    },
+    {
+      "name": "inviZiblePro",
+      "github_url": "https://github.com/Gedsh/InviZible",
+      "google_play_url": "",
+      "apple_store_url": "",
+      "microsoft_store_url": ""
+    },
+    {
+      "name": "nipoVpn",
+      "github_url": "https://github.com/MortezaBashsiz/nipovpn",
+      "google_play_url": "",
+      "apple_store_url": "",
+      "microsoft_store_url": ""
     }
   ]
 }
