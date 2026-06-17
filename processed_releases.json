@@ -1,5 +1,5 @@
 {
-  "lastReportMessageId": 6588,
+  "lastReportMessageId": 6599,
   "Oblivion": [
     {
       "version": "v7",
@@ -182,8 +182,8 @@
   ],
   "Karing": [
     {
-      "version": "v1.2.20.2305",
-      "timestamp": 1781609748
+      "version": "v1.2.20.2307",
+      "timestamp": 1781694539
     }
   ],
   "Termux": [
@@ -304,6 +304,18 @@
     {
       "version": "v0.7.1",
       "timestamp": 1781380550
+    }
+  ],
+  "inviZiblePro": [
+    {
+      "version": "v2.7.1-beta",
+      "timestamp": 1781694737
+    }
+  ],
+  "nipoVpn": [
+    {
+      "version": "v1.1.59",
+      "timestamp": 1781694776
     }
   ]
 }
