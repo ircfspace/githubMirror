@@ -1,5 +1,5 @@
 {
-  "lastReportMessageId": 6649,
+  "lastReportMessageId": 6674,
   "Oblivion": [
     {
       "version": "v7",
@@ -158,8 +158,8 @@
   ],
   "theFeed": [
     {
-      "version": "v0.26.1-rc0",
-      "timestamp": 1781797538
+      "version": "v0.26.2-rc5",
+      "timestamp": 1781815326
     }
   ],
   "Kabootar": [
