@@ -1,5 +1,5 @@
 {
-  "lastReportMessageId": 6742,
+  "lastReportMessageId": 6786,
   "Oblivion": [
     {
       "version": "v7",
@@ -86,8 +86,8 @@
   ],
   "v2rayNG": [
     {
-      "version": "2.2.4",
-      "timestamp": 1781413018
+      "version": "2.2.5",
+      "timestamp": 1781965448
     }
   ],
   "MahsaAlert": [
@@ -158,8 +158,8 @@
   ],
   "theFeed": [
     {
-      "version": "v0.26.2-rc9",
-      "timestamp": 1781883623
+      "version": "v0.26.3-rc0",
+      "timestamp": 1781965916
     }
   ],
   "Kabootar": [
@@ -290,8 +290,8 @@
   ],
   "onionHop": [
     {
-      "version": "v3.3.0",
-      "timestamp": 1780895565
+      "version": "v3.4.0",
+      "timestamp": 1781966724
     }
   ],
   "spoofGUI": [
