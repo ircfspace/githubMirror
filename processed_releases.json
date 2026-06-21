@@ -1,5 +1,5 @@
 {
-  "lastReportMessageId": 6811,
+  "lastReportMessageId": 6842,
   "Oblivion": [
     {
       "version": "v7",
@@ -14,8 +14,8 @@
   ],
   "DefyxVPN": [
     {
-      "version": "v5.4.1",
-      "timestamp": 1780522345
+      "version": "v5.5.5",
+      "timestamp": 1782018164
     }
   ],
   "Hiddify": [
@@ -158,8 +158,8 @@
   ],
   "theFeed": [
     {
-      "version": "v0.26.3-rc2",
-      "timestamp": 1781985209
+      "version": "v0.26.3-rc4",
+      "timestamp": 1782018581
     }
   ],
   "Kabootar": [
