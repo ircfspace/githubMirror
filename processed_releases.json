@@ -1,5 +1,5 @@
 {
-  "lastReportMessageId": 6932,
+  "lastReportMessageId": 6960,
   "Oblivion": [
     {
       "version": "v7",
@@ -158,8 +158,8 @@
   ],
   "theFeed": [
     {
-      "version": "v0.27.1",
-      "timestamp": 1782130922
+      "version": "v0.28.1-rc0",
+      "timestamp": 1782162185
     }
   ],
   "Kabootar": [
@@ -212,8 +212,8 @@
   ],
   "vayDnsClient": [
     {
-      "version": "v2.1.1",
-      "timestamp": 1782104625
+      "version": "v2.1.2",
+      "timestamp": 1782162247
     }
   ],
   "MasterHttpRelayRust": [
