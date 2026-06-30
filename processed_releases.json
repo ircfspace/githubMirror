@@ -1,5 +1,5 @@
 {
-  "lastReportMessageId": 7270,
+  "lastReportMessageId": 7294,
   "Oblivion": [
     {
       "version": "v7",
@@ -182,8 +182,8 @@
   ],
   "Karing": [
     {
-      "version": "v1.2.21.2403",
-      "timestamp": 1782813819
+      "version": "v1.2.21.2404",
+      "timestamp": 1782830696
     }
   ],
   "Termux": [
@@ -290,8 +290,8 @@
   ],
   "onionHop": [
     {
-      "version": "v3.4.4",
-      "timestamp": 1782765239
+      "version": "v3.4.5",
+      "timestamp": 1782831686
     }
   ],
   "spoofGUI": [
@@ -308,8 +308,8 @@
   ],
   "inviZiblePro": [
     {
-      "version": "v2.7.1-beta",
-      "timestamp": 1781694737
+      "version": "v2.7.2-beta",
+      "timestamp": 1782831918
     }
   ],
   "nipoVpn": [
