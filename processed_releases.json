@@ -1,5 +1,5 @@
 {
-  "lastReportMessageId": 7617,
+  "lastReportMessageId": 7660,
   "Oblivion": [
     {
       "version": "v7",
@@ -86,8 +86,8 @@
   ],
   "v2rayNG": [
     {
-      "version": "2.2.5",
-      "timestamp": 1781965448
+      "version": "2.2.6",
+      "timestamp": 1783259950
     }
   ],
   "MahsaAlert": [
@@ -158,8 +158,8 @@
   ],
   "theFeed": [
     {
-      "version": "v0.30.8-rc0",
-      "timestamp": 1783224363
+      "version": "v0.30.8",
+      "timestamp": 1783260512
     }
   ],
   "Kabootar": [
