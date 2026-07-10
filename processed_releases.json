@@ -1,5 +1,5 @@
 {
-  "lastReportMessageId": 7869,
+  "lastReportMessageId": 7888,
   "Oblivion": [
     {
       "version": "v7",
@@ -98,8 +98,8 @@
   ],
   "Amnezia": [
     {
-      "version": "4.8.19.0",
-      "timestamp": 1781558741
+      "version": "4.8.21.0",
+      "timestamp": 1783713070
     }
   ],
   "SlipstreamPlus": [
@@ -290,8 +290,8 @@
   ],
   "onionHop": [
     {
-      "version": "v3.7",
-      "timestamp": 1783627976
+      "version": "v3.7.1",
+      "timestamp": 1783714262
     }
   ],
   "spoofGUI": [
