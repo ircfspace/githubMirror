@@ -1,5 +1,5 @@
 {
-  "lastReportMessageId": 7958,
+  "lastReportMessageId": 7968,
   "Oblivion": [
     {
       "version": "v7",
@@ -68,8 +68,8 @@
   ],
   "Begzar": [
     {
-      "version": "v6.0.0",
-      "timestamp": 1778083372
+      "version": "v6.4.0",
+      "timestamp": 1783914001
     }
   ],
   "Happ": [
@@ -308,8 +308,8 @@
   ],
   "inviZiblePro": [
     {
-      "version": "v2.7.2-beta",
-      "timestamp": 1782831918
+      "version": "v7.5.0-stable",
+      "timestamp": 1783914213
     }
   ],
   "nipoVpn": [
