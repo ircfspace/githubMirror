@@ -1,5 +1,5 @@
 {
-  "lastReportMessageId": 8387,
+  "lastReportMessageId": 8413,
   "Oblivion": [
     {
       "version": "v7",
@@ -14,8 +14,8 @@
   ],
   "DefyxVPN": [
     {
-      "version": "v5.7.5",
-      "timestamp": 1784663440
+      "version": "v5.8.0",
+      "timestamp": 1785208237
     }
   ],
   "Hiddify": [
@@ -182,8 +182,8 @@
   ],
   "Karing": [
     {
-      "version": "v1.2.23.2603",
-      "timestamp": 1785147992
+      "version": "v1.2.23.2604",
+      "timestamp": 1785209132
     }
   ],
   "Termux": [
@@ -260,8 +260,8 @@
   ],
   "whiteDNS": [
     {
-      "version": "v1.5.1c-rc17",
-      "timestamp": 1784834887
+      "version": "1.6.0",
+      "timestamp": 1785209272
     }
   ],
   "tunnelX": [
