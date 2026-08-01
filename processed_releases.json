@@ -1,5 +1,5 @@
 {
-  "lastReportMessageId": 8539,
+  "lastReportMessageId": 8565,
   "Oblivion": [
     {
       "version": "v7",
@@ -86,8 +86,8 @@
   ],
   "v2rayNG": [
     {
-      "version": "2.2.6",
-      "timestamp": 1783259950
+      "version": "2.3.1",
+      "timestamp": 1785573493
     }
   ],
   "MahsaAlert": [
@@ -212,8 +212,8 @@
   ],
   "vayDnsClient": [
     {
-      "version": "v2.3.0",
-      "timestamp": 1784987280
+      "version": "v2.4.0",
+      "timestamp": 1785573573
     }
   ],
   "MasterHttpRelayRust": [
