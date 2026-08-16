@@ -1,5 +1,5 @@
 {
-  "lastReportMessageId": 8917,
+  "lastReportMessageId": 8920,
   "Oblivion": [
     {
       "version": "v7",
@@ -290,8 +290,8 @@
   ],
   "onionHop": [
     {
-      "version": "v3.7.11",
-      "timestamp": 1786845566
+      "version": "v3.7.12",
+      "timestamp": 1786905485
     }
   ],
   "spoofGUI": [
