@@ -1,5 +1,5 @@
 {
-  "lastReportMessageId": 8950,
+  "lastReportMessageId": 8961,
   "Oblivion": [
     {
       "version": "v7",
@@ -284,8 +284,8 @@
   ],
   "networkChecker": [
     {
-      "version": "1.5.0",
-      "timestamp": 1786087714
+      "version": "1.6.0",
+      "timestamp": 1787144382
     }
   ],
   "onionHop": [
@@ -308,8 +308,8 @@
   ],
   "inviZiblePro": [
     {
-      "version": "v7.5.0-stable",
-      "timestamp": 1783914213
+      "version": "v2.7.3-beta",
+      "timestamp": 1787144568
     }
   ],
   "nipoVpn": [
