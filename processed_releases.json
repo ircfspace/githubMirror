@@ -1,5 +1,5 @@
 {
-  "lastReportMessageId": 9047,
+  "lastReportMessageId": 9064,
   "Oblivion": [
     {
       "version": "v7",
@@ -134,8 +134,8 @@
   ],
   "xrayKnife": [
     {
-      "version": "v10.1.1",
-      "timestamp": 1784518977
+      "version": "v11.0.0",
+      "timestamp": 1787317284
     }
   ],
   "zedSecure": [
@@ -290,8 +290,8 @@
   ],
   "onionHop": [
     {
-      "version": "v3.7.12",
-      "timestamp": 1786905485
+      "version": "v3.8.1",
+      "timestamp": 1787317310
     }
   ],
   "spoofGUI": [
