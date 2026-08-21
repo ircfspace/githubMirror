@@ -1,5 +1,5 @@
 {
-  "lastReportMessageId": 9036,
+  "lastReportMessageId": 9047,
   "Oblivion": [
     {
       "version": "v7",
@@ -182,8 +182,8 @@
   ],
   "Karing": [
     {
-      "version": "v1.2.24.2703",
-      "timestamp": 1787209634
+      "version": "v1.2.24.2704",
+      "timestamp": 1787296021
     }
   ],
   "Termux": [
