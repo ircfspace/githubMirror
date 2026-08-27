@@ -1,5 +1,5 @@
 {
-  "lastReportMessageId": 9159,
+  "lastReportMessageId": 9198,
   "Oblivion": [
     {
       "version": "v7",
@@ -158,8 +158,8 @@
   ],
   "theFeed": [
     {
-      "version": "v0.38.1-rc1",
-      "timestamp": 1787165465
+      "version": "v0.38.1-rc2",
+      "timestamp": 1787820416
     }
   ],
   "Kabootar": [
@@ -182,8 +182,8 @@
   ],
   "Karing": [
     {
-      "version": "v1.2.24.2705",
-      "timestamp": 1787641910
+      "version": "v1.2.24.2706",
+      "timestamp": 1787821204
     }
   ],
   "Termux": [
