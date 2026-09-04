@@ -1,5 +1,5 @@
 {
-  "lastReportMessageId": 9334,
+  "lastReportMessageId": 9338,
   "Oblivion": [
     {
       "version": "v7",
@@ -212,8 +212,8 @@
   ],
   "vayDnsClient": [
     {
-      "version": "v2.7.1",
-      "timestamp": 1787914966
+      "version": "v2.8.1",
+      "timestamp": 1788538040
     }
   ],
   "MasterHttpRelayRust": [
