@@ -1,5 +1,5 @@
 {
-  "lastReportMessageId": 9338,
+  "lastReportMessageId": 9381,
   "Oblivion": [
     {
       "version": "v7",
@@ -80,8 +80,8 @@
   ],
   "v2rayN": [
     {
-      "version": "7.24.9",
-      "timestamp": 1787987644
+      "version": "7.25.0",
+      "timestamp": 1788582739
     }
   ],
   "v2rayNG": [
