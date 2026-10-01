@@ -1,5 +1,5 @@
 {
-  "lastReportMessageId": 9886,
+  "lastReportMessageId": 9912,
   "Oblivion": [
     {
       "version": "v8",
@@ -86,8 +86,8 @@
   ],
   "v2rayNG": [
     {
-      "version": "2.3.9",
-      "timestamp": 1790076534
+      "version": "2.3.10",
+      "timestamp": 1790859795
     }
   ],
   "MahsaAlert": [
@@ -140,8 +140,8 @@
   ],
   "zedSecure": [
     {
-      "version": "v3.1.0",
-      "timestamp": 1790806154
+      "version": "v3.1.1",
+      "timestamp": 1790860083
     }
   ],
   "MasterDns": [
