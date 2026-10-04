@@ -1,5 +1,5 @@
 {
-  "lastReportMessageId": 9985,
+  "lastReportMessageId": 9999,
   "Oblivion": [
     {
       "version": "v8",
@@ -20,8 +20,8 @@
   ],
   "Hiddify": [
     {
-      "version": "v4.1.1",
-      "timestamp": 1778083372
+      "version": "draft",
+      "timestamp": 1791117084
     }
   ],
   "MahsaNG": [
