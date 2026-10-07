@@ -1,5 +1,5 @@
 {
-  "lastReportMessageId": 10094,
+  "lastReportMessageId": 10108,
   "Oblivion": [
     {
       "version": "v8",
@@ -140,8 +140,8 @@
   ],
   "zedSecure": [
     {
-      "version": "v3.1.4",
-      "timestamp": 1791061960
+      "version": "v3.1.5",
+      "timestamp": 1791415277
     }
   ],
   "MasterDns": [
