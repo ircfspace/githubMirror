@@ -1,5 +1,5 @@
 {
-  "lastReportMessageId": 10270,
+  "lastReportMessageId": 10312,
   "Oblivion": [
     {
       "version": "v8",
@@ -140,8 +140,8 @@
   ],
   "zedSecure": [
     {
-      "version": "v3.1.5",
-      "timestamp": 1791415277
+      "version": "v3.1.6",
+      "timestamp": 1791901113
     }
   ],
   "MasterDns": [
@@ -158,8 +158,8 @@
   ],
   "theFeed": [
     {
-      "version": "v0.38.1",
-      "timestamp": 1791851650
+      "version": "v0.38.2",
+      "timestamp": 1791901714
     }
   ],
   "Kabootar": [
