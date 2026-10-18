@@ -1,5 +1,5 @@
 {
-  "lastReportMessageId": 10411,
+  "lastReportMessageId": 10418,
   "Oblivion": [
     {
       "version": "v8",
@@ -260,8 +260,8 @@
   ],
   "whiteDNS": [
     {
-      "version": "1.6.7-beta2",
-      "timestamp": 1792321142
+      "version": "1.6.8",
+      "timestamp": 1792338211
     }
   ],
   "tunnelX": [
