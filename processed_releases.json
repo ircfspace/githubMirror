@@ -1,5 +1,5 @@
 {
-  "lastReportMessageId": 10520,
+  "lastReportMessageId": 10549,
   "Oblivion": [
     {
       "version": "v8",
@@ -86,8 +86,8 @@
   ],
   "v2rayNG": [
     {
-      "version": "2.3.12",
-      "timestamp": 1792320959
+      "version": "2.3.13",
+      "timestamp": 1792642827
     }
   ],
   "MahsaAlert": [
@@ -260,8 +260,8 @@
   ],
   "whiteDNS": [
     {
-      "version": "1.6.8",
-      "timestamp": 1792338211
+      "version": "1.6.9",
+      "timestamp": 1792643019
     }
   ],
   "tunnelX": [
