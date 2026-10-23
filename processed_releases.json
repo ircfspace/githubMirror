@@ -1,5 +1,5 @@
 {
-  "lastReportMessageId": 10565,
+  "lastReportMessageId": 10590,
   "Oblivion": [
     {
       "version": "v8",
@@ -134,8 +134,8 @@
   ],
   "xrayKnife": [
     {
-      "version": "v11.4.0",
-      "timestamp": 1791997199
+      "version": "v11.4.1",
+      "timestamp": 1792729152
     }
   ],
   "zedSecure": [
@@ -260,8 +260,8 @@
   ],
   "whiteDNS": [
     {
-      "version": "1.6.10",
-      "timestamp": 1792688414
+      "version": "1.6.11",
+      "timestamp": 1792729375
     }
   ],
   "tunnelX": [
