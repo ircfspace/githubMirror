@@ -1,5 +1,5 @@
 {
-  "lastReportMessageId": 10632,
+  "lastReportMessageId": 10636,
   "Oblivion": [
     {
       "version": "v8",
@@ -176,8 +176,8 @@
   ],
   "slipGate": [
     {
-      "version": "v1.6.6-dev",
-      "timestamp": 1792927023
+      "version": "v1.6.7-dev",
+      "timestamp": 1792943615
     }
   ],
   "Karing": [
