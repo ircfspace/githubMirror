@@ -1,5 +1,5 @@
 {
-  "lastReportMessageId": 10636,
+  "lastReportMessageId": 10723,
   "Oblivion": [
     {
       "version": "v8",
@@ -146,8 +146,8 @@
   ],
   "MasterDns": [
     {
-      "version": "v2026.06.13.234407-7de2476",
-      "timestamp": 1781431063
+      "version": "v2026.10.26.100415-5f83ee9",
+      "timestamp": 1793018955
     }
   ],
   "pyWarp": [
@@ -182,8 +182,8 @@
   ],
   "Karing": [
     {
-      "version": "v1.2.26.2911",
-      "timestamp": 1792755220
+      "version": "v1.2.26.2912",
+      "timestamp": 1793019747
     }
   ],
   "Termux": [
