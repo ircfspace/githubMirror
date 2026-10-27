@@ -1,5 +1,5 @@
 {
-  "lastReportMessageId": 10742,
+  "lastReportMessageId": 10772,
   "Oblivion": [
     {
       "version": "v8",
@@ -14,14 +14,14 @@
   ],
   "DefyxVPN": [
     {
-      "version": "v5.12.5",
-      "timestamp": 1792448663
+      "version": "v5.12.7",
+      "timestamp": 1793139193
     }
   ],
   "Hiddify": [
     {
-      "version": "draft",
-      "timestamp": 1791117084
+      "version": "v4.1.1",
+      "timestamp": 1793140301
     }
   ],
   "MahsaNG": [
@@ -308,14 +308,14 @@
   ],
   "inviZiblePro": [
     {
-      "version": "v2.7.6-beta",
-      "timestamp": 1792856711
+      "version": "v7.6.0-stable",
+      "timestamp": 1793140522
     }
   ],
   "nipoVpn": [
     {
-      "version": "v1.1.59",
-      "timestamp": 1781694776
+      "version": "dev-windows-v0.1.12",
+      "timestamp": 1793140546
     }
   ]
 }
