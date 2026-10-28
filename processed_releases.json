@@ -1,5 +1,5 @@
 {
-  "lastReportMessageId": 10807,
+  "lastReportMessageId": 10812,
   "Oblivion": [
     {
       "version": "v8",
@@ -314,8 +314,8 @@
   ],
   "nipoVpn": [
     {
-      "version": "dev-windows-v0.1.12",
-      "timestamp": 1793140546
+      "version": "v1.1.60",
+      "timestamp": 1793226338
     }
   ]
 }
