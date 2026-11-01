@@ -1,5 +1,5 @@
 {
-  "lastReportMessageId": 10999,
+  "lastReportMessageId": 11022,
   "Oblivion": [
     {
       "version": "v8",
@@ -86,8 +86,8 @@
   ],
   "v2rayNG": [
     {
-      "version": "2.3.14",
-      "timestamp": 1793164350
+      "version": "2.3.15",
+      "timestamp": 1793538527
     }
   ],
   "MahsaAlert": [
