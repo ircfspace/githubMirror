@@ -1,5 +1,5 @@
 {
-  "lastReportMessageId": 11051,
+  "lastReportMessageId": 11228,
   "Oblivion": [
     {
       "version": "v8",
@@ -20,8 +20,8 @@
   ],
   "Hiddify": [
     {
-      "version": "v5.3.0",
-      "timestamp": 1793512579
+      "version": "v5.4.0",
+      "timestamp": 1793634007
     }
   ],
   "MahsaNG": [
@@ -158,8 +158,8 @@
   ],
   "theFeed": [
     {
-      "version": "v0.40.5-rc0",
-      "timestamp": 1793570669
+      "version": "v0.41.0",
+      "timestamp": 1793634717
     }
   ],
   "Kabootar": [
@@ -182,8 +182,8 @@
   ],
   "Karing": [
     {
-      "version": "v1.2.26.2918",
-      "timestamp": 1793338247
+      "version": "v1.2.26.2919",
+      "timestamp": 1793635470
     }
   ],
   "Termux": [
@@ -316,6 +316,18 @@
     {
       "version": "dev-windows-v0.1.13",
       "timestamp": 1793400721
+    }
+  ],
+  "pattN": [
+    {
+      "version": "7.25.6-P40",
+      "timestamp": 1793638223
+    }
+  ],
+  "pattNG": [
+    {
+      "version": "2.3.15-P71",
+      "timestamp": 1793639154
     }
   ]
 }
