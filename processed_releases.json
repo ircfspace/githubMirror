@@ -1,5 +1,5 @@
 {
-  "lastReportMessageId": 11302,
+  "lastReportMessageId": 11353,
   "Oblivion": [
     {
       "version": "v8",
@@ -20,8 +20,8 @@
   ],
   "Hiddify": [
     {
-      "version": "v5.5.1",
-      "timestamp": 1793748341
+      "version": "v5.5.5",
+      "timestamp": 1793836330
     }
   ],
   "MahsaNG": [
@@ -158,8 +158,8 @@
   ],
   "theFeed": [
     {
-      "version": "v0.41.0",
-      "timestamp": 1793634717
+      "version": "v0.42.0",
+      "timestamp": 1793837078
     }
   ],
   "Kabootar": [
@@ -260,8 +260,8 @@
   ],
   "whiteDNS": [
     {
-      "version": "1.6.15",
-      "timestamp": 1793054010
+      "version": "1.6.16",
+      "timestamp": 1793837251
     }
   ],
   "tunnelX": [
