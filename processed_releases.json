@@ -1,5 +1,5 @@
 {
-  "lastReportMessageId": 11387,
+  "lastReportMessageId": 11420,
   "Oblivion": [
     {
       "version": "v8",
@@ -158,8 +158,8 @@
   ],
   "theFeed": [
     {
-      "version": "v0.42.0",
-      "timestamp": 1793837078
+      "version": "v0.43.0",
+      "timestamp": 1794056198
     }
   ],
   "Kabootar": [
@@ -272,8 +272,8 @@
   ],
   "tunnelForge": [
     {
-      "version": "v0.7.8",
-      "timestamp": 1793974152
+      "version": "v0.7.9",
+      "timestamp": 1794056300
     }
   ],
   "stormDNS": [
