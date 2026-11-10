@@ -1,5 +1,5 @@
 {
-  "lastReportMessageId": 11443,
+  "lastReportMessageId": 11470,
   "Oblivion": [
     {
       "version": "v8",
@@ -14,14 +14,14 @@
   ],
   "DefyxVPN": [
     {
-      "version": "v5.13.0",
-      "timestamp": 1793667941
+      "version": "v5.13.2",
+      "timestamp": 1794274447
     }
   ],
   "Hiddify": [
     {
-      "version": "draft",
-      "timestamp": 1794007388
+      "version": "v5.5.6.dev",
+      "timestamp": 1794275669
     }
   ],
   "MahsaNG": [
