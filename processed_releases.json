@@ -1,5 +1,5 @@
 {
-  "lastReportMessageId": 11570,
+  "lastReportMessageId": 11606,
   "Oblivion": [
     {
       "version": "v8",
@@ -74,8 +74,8 @@
   ],
   "Happ": [
     {
-      "version": "4.10.1",
-      "timestamp": 1793801327
+      "version": "4.11.1",
+      "timestamp": 1794495425
     }
   ],
   "v2rayN": [
@@ -86,8 +86,8 @@
   ],
   "v2rayNG": [
     {
-      "version": "2.3.15",
-      "timestamp": 1793538527
+      "version": "2.4.0",
+      "timestamp": 1794496061
     }
   ],
   "MahsaAlert": [
@@ -182,8 +182,8 @@
   ],
   "Karing": [
     {
-      "version": "v1.2.26.2927",
-      "timestamp": 1794406192
+      "version": "v1.2.26.2929",
+      "timestamp": 1794496974
     }
   ],
   "Termux": [
