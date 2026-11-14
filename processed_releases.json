@@ -1,5 +1,5 @@
 {
-  "lastReportMessageId": 11651,
+  "lastReportMessageId": 11698,
   "Oblivion": [
     {
       "version": "v8",
@@ -20,8 +20,8 @@
   ],
   "Hiddify": [
     {
-      "version": "v5.9.0",
-      "timestamp": 1794527460
+      "version": "v5.9.2",
+      "timestamp": 1794613816
     }
   ],
   "MahsaNG": [
@@ -320,8 +320,8 @@
   ],
   "pattN": [
     {
-      "version": "7.25.6-P40",
-      "timestamp": 1793638223
+      "version": "7.25.6-P41",
+      "timestamp": 1794615167
     }
   ],
   "pattNG": [
