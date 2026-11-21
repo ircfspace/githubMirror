@@ -1,5 +1,5 @@
 {
-  "lastReportMessageId": 11962,
+  "lastReportMessageId": 12174,
   "Oblivion": [
     {
       "version": "v8",
@@ -14,14 +14,14 @@
   ],
   "DefyxVPN": [
     {
-      "version": "v5.13.2",
-      "timestamp": 1794274447
+      "version": "v5.14.1",
+      "timestamp": 1795219735
     }
   ],
   "Hiddify": [
     {
-      "version": "v5.9.8",
-      "timestamp": 1794783827
+      "version": "v5.9.15",
+      "timestamp": 1795221636
     }
   ],
   "MahsaNG": [
@@ -74,8 +74,8 @@
   ],
   "Happ": [
     {
-      "version": "4.11.1",
-      "timestamp": 1794495425
+      "version": "4.12.0",
+      "timestamp": 1795221745
     }
   ],
   "v2rayN": [
@@ -98,8 +98,8 @@
   ],
   "Amnezia": [
     {
-      "version": "5.1.1.6",
-      "timestamp": 1794809270
+      "version": "5.1.1.10",
+      "timestamp": 1795223032
     }
   ],
   "SlipstreamPlus": [
@@ -134,20 +134,20 @@
   ],
   "xrayKnife": [
     {
-      "version": "v11.5.0",
-      "timestamp": 1793337488
+      "version": "v11.5.1",
+      "timestamp": 1795223394
     }
   ],
   "zedSecure": [
     {
-      "version": "v3.1.8",
-      "timestamp": 1793671147
+      "version": "v3.2.0",
+      "timestamp": 1795226118
     }
   ],
   "MasterDns": [
     {
-      "version": "v2026.10.26.100415-5f83ee9",
-      "timestamp": 1793018955
+      "version": "v2026.11.18.210322-7198b45",
+      "timestamp": 1795227012
     }
   ],
   "pyWarp": [
@@ -182,8 +182,8 @@
   ],
   "Karing": [
     {
-      "version": "v1.2.26.2932",
-      "timestamp": 1794810226
+      "version": "v1.2.26.2934",
+      "timestamp": 1795227983
     }
   ],
   "Termux": [
@@ -272,8 +272,8 @@
   ],
   "tunnelForge": [
     {
-      "version": "v0.7.9",
-      "timestamp": 1794056300
+      "version": "v1.0.0",
+      "timestamp": 1795228113
     }
   ],
   "stormDNS": [
@@ -290,8 +290,8 @@
   ],
   "onionHop": [
     {
-      "version": "v3.11",
-      "timestamp": 1794326641
+      "version": "v3.12",
+      "timestamp": 1795229841
     }
   ],
   "spoofGUI": [
@@ -326,8 +326,8 @@
   ],
   "pattNG": [
     {
-      "version": "2.4.0-P72",
-      "timestamp": 1794641698
+      "version": "2.4.0-P73",
+      "timestamp": 1795231025
     }
   ]
 }
